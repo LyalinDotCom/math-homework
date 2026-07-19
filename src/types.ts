@@ -1,57 +1,26 @@
-export type Problem = {
-  number: string;
-  expression: string;
-  studentAnswer: string;
-  correctAnswer: string;
-  isCorrect: boolean;
-  confidence: number;
-  initialStudentAnswer?: string;
-  handwritingVerified?: boolean;
-  verificationNote?: string;
-  gradingMethod?: 'local-arithmetic' | 'manual-required';
-};
-
-export type Review = {
-  worksheetTitle: string;
-  summary: string;
-  problems: Problem[];
-  model?: string;
-  reviewedAt?: string;
-  editedAt?: string;
-  verificationPasses?: number;
-  gradingMethod?: 'local-arithmetic';
-};
-
-export type Page = {
-  id: string;
-  number: number;
-  capturedAt: string;
-  imageFile: string;
-  reviewFile: string;
-  review: Review;
-  imageDataUrl?: string;
-  sessionId?: string;
-};
-
-export type Session = {
-  id: string;
-  startedAt: string;
-  endedAt: string | null;
-  resumedAt?: string[];
-  pages: Page[];
-};
+export type { Page, Problem, Review, Session } from "../shared/contracts";
 
 declare global {
   interface Window {
     mathHomework: {
-      startSession(): Promise<Session>;
-      resumeSession(sessionId: string): Promise<Session>;
-      endSession(): Promise<Session | null>;
-      reviewPage(imageDataUrl: string): Promise<Page & { sessionId: string }>;
-      updatePage(sessionId: string, pageId: string, review: Review): Promise<Review>;
-      listSessions(): Promise<Session[]>;
-      getSession(sessionId: string): Promise<Session>;
-      reprocessSession(sessionId: string): Promise<Array<{ pageId: string; problems: number }>>;
+      startSession(): Promise<import("../shared/contracts").Session>;
+      resumeSession(
+        sessionId: string,
+      ): Promise<import("../shared/contracts").Session>;
+      endSession(): Promise<import("../shared/contracts").Session | null>;
+      reviewPage(
+        imageDataUrl: string,
+      ): Promise<import("../shared/contracts").Page & { sessionId: string }>;
+      updatePage(
+        sessionId: string,
+        pageId: string,
+        review: import("../shared/contracts").Review,
+      ): Promise<import("../shared/contracts").Review>;
+      listSessions(): Promise<import("../shared/contracts").Session[]>;
+      getSession(
+        sessionId: string,
+      ): Promise<import("../shared/contracts").Session>;
+      getPageImage(sessionId: string, pageId: string): Promise<string>;
       revealData(): Promise<string>;
     };
   }
