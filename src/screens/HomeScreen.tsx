@@ -1,64 +1,62 @@
-import { Aperture, Camera, Check, Clock3, ScanLine, X } from "lucide-react";
+import { Aperture, Camera, Check, X } from "lucide-react";
+import { Logo } from "../components/Logo";
 
 export function HomeScreen({
   onScan,
   onHistory,
+  busy,
   error,
 }: {
   onScan(): void;
   onHistory(): void;
+  busy: boolean;
   error: string;
 }) {
   return (
     <main className="home">
-      <div className="eyebrow">
-        <span>LOCAL WORKSHEET REVIEW</span>
-      </div>
-      <h1>
-        Check the work.
-        <br />
-        <em>Keep the momentum.</em>
-      </h1>
+      <Logo large />
+      <h1>Math Homework</h1>
       <p className="lede">
-        Point the camera at a math worksheet, capture a page, and review every
-        answer—without interrupting the session.
+        Point the camera at a worksheet, capture each page, and check every
+        answer side by side. Graded locally, saved on this Mac.
       </p>
       <div className="home-actions">
-        <button className="primary-button" onClick={onScan}>
-          <ScanLine size={20} /> Activate scan <span>⌘ ↵</span>
+        <button className="primary-button" disabled={busy} onClick={onScan}>
+          {busy ? "Opening Camera…" : "Start Scanning"} <kbd>⌘↩</kbd>
         </button>
-        <button className="secondary-button" onClick={onHistory}>
-          <Clock3 size={19} /> View history
+        <button
+          className="secondary-button"
+          disabled={busy}
+          onClick={onHistory}
+        >
+          View History
         </button>
       </div>
       {error && (
         <div className="error-banner">
-          <X size={16} />
+          <X size={14} />
           {error}
         </div>
       )}
       <div className="steps">
         <div>
-          <b>01</b>
           <Camera />
           <h3>Position</h3>
-          <p>Hold one page flat in the camera frame.</p>
+          <p>Hold one page flat inside the frame.</p>
         </div>
         <div>
-          <b>02</b>
           <Aperture />
           <h3>Capture</h3>
-          <p>Press review when the page is sharp and clear.</p>
+          <p>Take the shot when the page is sharp.</p>
         </div>
         <div>
-          <b>03</b>
           <Check />
           <h3>Confirm</h3>
-          <p>Compare the scan and extracted work side by side.</p>
+          <p>Compare the scan with the extracted work.</p>
         </div>
       </div>
       <div className="privacy-note">
-        Archive saved on this Mac · Images processed by Gemini 3.5 Flash
+        Saved on this Mac · OCR by Gemini 3.5 Flash
       </div>
     </main>
   );

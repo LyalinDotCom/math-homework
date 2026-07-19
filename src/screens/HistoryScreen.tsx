@@ -32,6 +32,7 @@ export function HistoryScreen({
   busy,
   error,
   onBack,
+  onBackToList,
   onOpen,
   onSelectPage,
   onResume,
@@ -44,6 +45,7 @@ export function HistoryScreen({
   busy: boolean;
   error: string;
   onBack(): void;
+  onBackToList(): void;
   onOpen(id: string): void;
   onSelectPage(page: Page): void;
   onResume(id: string): void;
@@ -58,36 +60,39 @@ export function HistoryScreen({
             <span>Math Homework</span>
           </button>
           <button className="quiet-button" onClick={onBack}>
-            <X size={16} /> Close history
+            <X size={14} /> Close
           </button>
         </header>
         <main className="history-detail">
-          <button className="text-back" onClick={onBack}>
-            <ArrowLeft size={15} /> All sessions
+          <button className="text-back" onClick={onBackToList}>
+            <ArrowLeft size={14} /> All Sessions
           </button>
           <div className="detail-title">
             <div>
-              <span>SESSION</span>
+              <span>Session</span>
               <h2>
                 {formatDate(selected.startedAt)} at{" "}
                 {formatTime(selected.startedAt)}
               </h2>
             </div>
             <div className="detail-actions">
-              <p>{selected.pages.length} pages reviewed</p>
+              <p>
+                {selected.pages.length}{" "}
+                {selected.pages.length === 1 ? "page" : "pages"} reviewed
+              </p>
               <button
                 className="resume-button"
                 disabled={busy}
                 onClick={() => onResume(selected.id)}
               >
-                <Camera size={16} />
-                {busy ? "Opening camera…" : "Resume session"}
+                <Camera size={14} />
+                {busy ? "Opening Camera…" : "Resume Session"}
               </button>
             </div>
           </div>
           {error && (
             <div className="error-banner">
-              <X size={16} />
+              <X size={14} />
               {error}
             </div>
           )}
@@ -106,7 +111,7 @@ export function HistoryScreen({
             <div className="review-grid compact">
               <section className="panel scan-panel">
                 <div className="panel-title">
-                  <span>ORIGINAL SCAN</span>
+                  <span>Original scan</span>
                 </div>
                 <div className="scan-paper">
                   <img
@@ -117,7 +122,7 @@ export function HistoryScreen({
               </section>
               <section className="panel results-panel">
                 <div className="panel-title">
-                  <span>{review.worksheetTitle || "EXTRACTED WORK"}</span>
+                  <span>{review.worksheetTitle || "Extracted work"}</span>
                   <div className="score">
                     <b>
                       {
@@ -125,7 +130,7 @@ export function HistoryScreen({
                           .length
                       }
                     </b>{" "}
-                    / {review.problems.length} correct
+                    of {review.problems.length} correct
                   </div>
                 </div>
                 <div className="problem-list read-only">
@@ -174,22 +179,21 @@ export function HistoryScreen({
         </button>
         <div className="top-actions">
           <button className="quiet-button" onClick={onReveal}>
-            <FolderOpen size={16} /> Show files
+            <FolderOpen size={14} /> Show Files
           </button>
           <button className="quiet-button" onClick={onBack}>
-            <X size={16} /> Close
+            <X size={14} /> Close
           </button>
         </div>
       </header>
       <main className="history-list">
         <div className="history-hero">
-          <span>REVIEW ARCHIVE</span>
-          <h1>Session history</h1>
-          <p>Every scan and answer review, saved locally on this Mac.</p>
+          <h1>History</h1>
+          <p>Every scan and review, saved on this Mac.</p>
         </div>
         {error && (
           <div className="error-banner">
-            <X size={16} />
+            <X size={14} />
             {error}
           </div>
         )}
@@ -227,7 +231,7 @@ export function HistoryScreen({
                   <div className="session-info">
                     <h3>{formatDate(item.startedAt)}</h3>
                     <p>
-                      <Clock3 size={14} />
+                      <Clock3 size={12} />
                       {formatTime(item.startedAt)} · {item.pages.length}{" "}
                       {item.pages.length === 1 ? "page" : "pages"}
                     </p>

@@ -15,10 +15,19 @@ let mainWindow: BrowserWindow | null = null;
 if (!app.requestSingleInstanceLock()) app.quit();
 
 app.on("second-instance", () => {
-  if (!mainWindow) return;
+  if (!mainWindow || mainWindow.isDestroyed()) return;
   if (mainWindow.isMinimized()) mainWindow.restore();
   mainWindow.focus();
 });
+
+async function openMainWindow() {
+  const window = await createMainWindow(PROJECT_ROOT);
+  window.on("closed", () => {
+    if (mainWindow === window) mainWindow = null;
+  });
+  mainWindow = window;
+  return window;
+}
 
 app
   .whenReady()
@@ -61,7 +70,7 @@ app
         activeSessionId = id;
       },
     });
-    mainWindow = await createMainWindow(PROJECT_ROOT);
+    await openMainWindow();
   })
   .catch((error) => {
     console.error("Math Homework failed to start:", error);
@@ -73,6 +82,5 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", async () => {
-  if (BrowserWindow.getAllWindows().length === 0)
-    mainWindow = await createMainWindow(PROJECT_ROOT);
+  if (BrowserWindow.getAllWindows().length === 0) await openMainWindow();
 });

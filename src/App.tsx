@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, History } from "lucide-react";
 import { Logo } from "./components/Logo";
 import { useCamera } from "./hooks/useCamera";
@@ -25,12 +25,28 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  // Slow IPC responses must never clobber state the user has navigated away
+  // from: every operation takes a token, and stale completions are dropped.
+  const opToken = useRef(0);
+  const sessionIdRef = useRef<string | null>(null);
+  const pageIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    sessionIdRef.current = session?.id ?? null;
+  }, [session]);
+  useEffect(() => {
+    pageIdRef.current = page?.id ?? null;
+  }, [page]);
 
   useEffect(() => {
     attachCamera();
   }, [attachCamera, view, page]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      const interactiveTarget =
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLButtonElement;
       if (
         (event.metaKey || event.ctrlKey) &&
         event.key === "Enter" &&
@@ -44,7 +60,7 @@ export default function App() {
         view === "scan" &&
         !page &&
         !busy &&
-        !(event.target instanceof HTMLInputElement)
+        !interactiveTarget
       ) {
         event.preventDefault();
         void captureAndReview();
@@ -54,27 +70,48 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
-  async function activateScan() {
+  function beginOp() {
+    const token = ++opToken.current;
+    setBusy(true);
     setError("");
+    return {
+      isCurrent: () => opToken.current === token,
+      end: () => {
+        if (opToken.current === token) setBusy(false);
+      },
+    };
+  }
+
+  function confirmDiscard() {
+    return (
+      !dirty || window.confirm("Discard unsaved corrections on this page?")
+    );
+  }
+
+  async function activateScan() {
+    if (busy) return;
+    const op = beginOp();
     try {
       await camera.open();
       const next = await window.mathHomework.startSession();
       setSession(next);
       setPage(null);
       setReview(null);
+      setDirty(false);
       setView("scan");
       requestAnimationFrame(camera.attach);
     } catch (cause) {
       camera.stop();
       setError(errorMessage(cause, "Camera access failed."));
+    } finally {
+      op.end();
     }
   }
 
   async function captureAndReview() {
     const video = camera.videoRef.current;
     if (!video || !video.videoWidth || busy) return;
-    setBusy(true);
-    setError("");
+    const op = beginOp();
     try {
       const canvas = document.createElement("canvas");
       const sourceX = Math.round(video.videoWidth * 0.08);
@@ -96,34 +133,40 @@ export default function App() {
         sourceWidth,
         sourceHeight,
       );
-      await reviewImage(canvas.toDataURL("image/jpeg", 0.92));
+      await reviewImage(canvas.toDataURL("image/jpeg", 0.92), op.isCurrent);
     } catch (cause) {
-      setError(errorMessage(cause, "Review failed."));
+      if (op.isCurrent()) setError(errorMessage(cause, "Review failed."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
   async function chooseImageAndReview() {
     if (busy) return;
-    setBusy(true);
-    setError("");
+    const op = beginOp();
     try {
       const imageDataUrl = await window.mathHomework.chooseImage();
-      if (imageDataUrl) await reviewImage(imageDataUrl);
+      if (imageDataUrl) await reviewImage(imageDataUrl, op.isCurrent);
     } catch (cause) {
-      setError(errorMessage(cause, "Could not use the selected image."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not use the selected image."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
-  async function reviewImage(imageDataUrl: string) {
+  async function reviewImage(imageDataUrl: string, isCurrent: () => boolean) {
     const result = await window.mathHomework.reviewPage(imageDataUrl);
+    // The session may have been ended or replaced while OCR ran; the page is
+    // safely on disk in its own session, so just drop the stale UI update.
+    if (!isCurrent() || sessionIdRef.current !== result.sessionId) return;
     setPage(result);
     setReview(result.review);
+    setDirty(false);
     setSession((current) =>
-      current ? { ...current, pages: [...current.pages, result] } : current,
+      current && current.id === result.sessionId
+        ? { ...current, pages: [...current.pages, result] }
+        : current,
     );
   }
 
@@ -137,54 +180,65 @@ export default function App() {
   }
 
   async function selectPage(selectedPage: Page) {
-    if (!session) return;
-    setBusy(true);
-    setError("");
+    if (!session || busy) return;
+    if (selectedPage.id === page?.id) return;
+    if (!confirmDiscard()) return;
+    const op = beginOp();
     try {
       const hydrated = await hydratePage(session.id, selectedPage);
+      if (!op.isCurrent()) return;
       setPage(hydrated);
       setReview(hydrated.review);
+      setDirty(false);
     } catch (cause) {
-      setError(errorMessage(cause, "Could not load this page."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not load this page."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
   async function saveReview() {
-    if (!page || !review || !session) return;
-    setBusy(true);
-    setError("");
+    if (!page || !review || !session || busy) return;
+    const targetSessionId = session.id;
+    const targetPageId = page.id;
+    const op = beginOp();
     try {
       const updated = await window.mathHomework.updatePage(
-        session.id,
-        page.id,
+        targetSessionId,
+        targetPageId,
         review,
       );
-      setReview(updated);
-      setPage((current) =>
-        current ? { ...current, review: updated } : current,
-      );
       setSession((current) =>
-        current
+        current && current.id === targetSessionId
           ? {
               ...current,
               pages: current.pages.map((item) =>
-                item.id === page.id ? { ...item, review: updated } : item,
+                item.id === targetPageId ? { ...item, review: updated } : item,
               ),
             }
           : current,
       );
-      setSaved(true);
-      window.setTimeout(() => setSaved(false), 1_600);
+      // Only refresh the visible review if the user is still on that page.
+      if (pageIdRef.current === targetPageId) {
+        setPage((current) =>
+          current ? { ...current, review: updated } : current,
+        );
+        setReview(updated);
+        setDirty(false);
+        setSaved(true);
+        window.setTimeout(() => setSaved(false), 1_600);
+      }
     } catch (cause) {
-      setError(errorMessage(cause, "Could not save changes."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not save changes."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
   function updateProblem(index: number, patch: Partial<Problem>) {
+    setDirty(true);
     setReview((current) =>
       current
         ? {
@@ -197,75 +251,101 @@ export default function App() {
     );
   }
 
+  function nextPage() {
+    if (!confirmDiscard()) return;
+    setPage(null);
+    setReview(null);
+    setDirty(false);
+    setError("");
+  }
+
   async function finishSession() {
+    if (!confirmDiscard()) return;
+    opToken.current += 1; // any in-flight capture no longer owns the UI
+    setBusy(false);
     setError("");
     try {
       await window.mathHomework.endSession();
+    } catch (cause) {
+      setError(errorMessage(cause, "Could not end the session."));
+    } finally {
+      // The main process always leaves the session inactive, so mirror that
+      // here even when stamping endedAt failed.
       camera.stop();
       setSession(null);
       setPage(null);
       setReview(null);
+      setDirty(false);
       setView("home");
-    } catch (cause) {
-      setError(errorMessage(cause, "Could not end the session."));
     }
   }
 
   async function openHistory() {
-    setBusy(true);
-    setError("");
+    if (busy) return;
+    const op = beginOp();
     try {
-      setSessions(await window.mathHomework.listSessions());
+      const list = await window.mathHomework.listSessions();
+      if (!op.isCurrent()) return;
+      setSessions(list);
       setView("history");
     } catch (cause) {
-      setError(errorMessage(cause, "Could not load history."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not load history."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
   async function openPastSession(id: string) {
-    setBusy(true);
-    setError("");
+    if (busy) return;
+    const op = beginOp();
     try {
       const item = await window.mathHomework.getSession(id);
-      setSession(item);
       const firstPage = item.pages[0]
         ? await hydratePage(item.id, item.pages[0])
         : null;
+      if (!op.isCurrent()) return;
+      setSession(item);
       setPage(firstPage);
       setReview(firstPage?.review ?? null);
     } catch (cause) {
-      setError(errorMessage(cause, "Could not open this session."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not open this session."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
   async function resumePastSession(id: string) {
-    setBusy(true);
-    setError("");
+    if (busy) return;
+    const op = beginOp();
     try {
       await camera.open();
       const resumed = await window.mathHomework.resumeSession(id);
       setSession(resumed);
       setPage(null);
       setReview(null);
+      setDirty(false);
       setView("scan");
       requestAnimationFrame(camera.attach);
     } catch (cause) {
       camera.stop();
-      setError(errorMessage(cause, "Could not resume this session."));
+      if (op.isCurrent())
+        setError(errorMessage(cause, "Could not resume this session."));
     } finally {
-      setBusy(false);
+      op.end();
     }
   }
 
-  function closeHistory() {
+  function backToSessionList() {
     setSession(null);
     setPage(null);
     setReview(null);
     setError("");
+  }
+
+  function closeHistory() {
+    backToSessionList();
     setView("home");
   }
 
@@ -279,6 +359,7 @@ export default function App() {
         busy={busy}
         error={error}
         onBack={closeHistory}
+        onBackToList={backToSessionList}
         onOpen={(id) => void openPastSession(id)}
         onSelectPage={(item) => void selectPage(item)}
         onResume={(id) => void resumePastSession(id)}
@@ -302,7 +383,7 @@ export default function App() {
         <div className="top-actions">
           {view === "scan" && session && (
             <div className="session-live">
-              <i /> Session live{" "}
+              <i /> Recording{" "}
               <span>
                 {session.pages.length}{" "}
                 {session.pages.length === 1 ? "page" : "pages"}
@@ -314,12 +395,16 @@ export default function App() {
               className="done-button"
               onClick={() => void finishSession()}
             >
-              <Check size={17} /> Done
+              <Check size={14} /> Done
             </button>
           )}
           {view === "home" && (
-            <button className="quiet-button" onClick={() => void openHistory()}>
-              <History size={16} /> History
+            <button
+              className="quiet-button"
+              disabled={busy}
+              onClick={() => void openHistory()}
+            >
+              <History size={14} /> History
             </button>
           )}
         </div>
@@ -328,6 +413,7 @@ export default function App() {
         <HomeScreen
           onScan={() => void activateScan()}
           onHistory={() => void openHistory()}
+          busy={busy}
           error={error}
         />
       ) : (
@@ -349,11 +435,7 @@ export default function App() {
               busy={busy}
               saved={saved}
               error={error}
-              onNext={() => {
-                setPage(null);
-                setReview(null);
-                setError("");
-              }}
+              onNext={nextPage}
               onSelectPage={(item) => void selectPage(item)}
               onSave={() => void saveReview()}
               onUpdate={updateProblem}

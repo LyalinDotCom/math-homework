@@ -191,29 +191,39 @@ export class SessionRepository {
 
   async preparePage(sessionId: string, imageBytes: Buffer) {
     const metadata = await this.readMetadata(sessionId);
-    const number =
+    let number =
       metadata.pages.reduce(
         (maximum, page) => Math.max(maximum, page.number),
         0,
       ) + 1;
-    const id = `page-${String(number).padStart(3, "0")}`;
-    const page = PageMetadataSchema.parse({
-      id,
-      number,
-      capturedAt: new Date().toISOString(),
-      imageFile: `pages/${id}.jpg`,
-      reviewFile: `pages/${id}.json`,
-      transcriptionFile: `pages/${id}.transcription.json`,
-      verificationFile: `pages/${id}.verification.json`,
-    });
-    const paths = this.pagePaths(sessionId, id);
-    await fs.writeFile(paths.image, imageBytes, { flag: "wx" });
-    return { metadata, page, paths };
+    // A crash between preparePage and commitPage can leave an orphaned JPEG
+    // that session.json never listed; skip past it instead of failing on
+    // the same id forever.
+    for (; number <= 999_999; number += 1) {
+      const id = `page-${String(number).padStart(3, "0")}`;
+      const page = PageMetadataSchema.parse({
+        id,
+        number,
+        capturedAt: new Date().toISOString(),
+        imageFile: `pages/${id}.jpg`,
+        reviewFile: `pages/${id}.json`,
+        transcriptionFile: `pages/${id}.transcription.json`,
+        verificationFile: `pages/${id}.verification.json`,
+      });
+      const paths = this.pagePaths(sessionId, id);
+      try {
+        await fs.writeFile(paths.image, imageBytes, { flag: "wx" });
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === "EEXIST") continue;
+        throw error;
+      }
+      return { page, paths };
+    }
+    throw new Error("Could not allocate a page ID");
   }
 
   async commitPage(
     sessionId: string,
-    metadata: SessionMetadata,
     page: PageMetadata,
     review: Review,
     artifacts?: {
@@ -241,6 +251,10 @@ export class SessionRepository {
       ]);
     }
     await writeJson(paths.review, ReviewSchema.parse(review));
+    // Re-read at commit time: the OCR await between preparePage and here can
+    // span minutes, and writing the stale snapshot back would clobber any
+    // endedAt/resumedAt stamped meanwhile.
+    const metadata = await this.readMetadata(sessionId);
     const updated = SessionMetadataSchema.parse({
       ...metadata,
       schemaVersion: SESSION_SCHEMA_VERSION,

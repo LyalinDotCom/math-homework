@@ -29,14 +29,18 @@ function isRetriable(error: unknown) {
   const candidate = error as {
     status?: number;
     code?: number | string;
+    name?: string;
     message?: string;
   };
+  // The only abort source is the local timeout watchdog, so treat it like the
+  // SDK's own timeout error.
+  if (candidate.name === "AbortError") return true;
   const status = Number(candidate.status ?? candidate.code);
   return (
     status === 408 ||
     status === 429 ||
     status >= 500 ||
-    /timeout|temporar|unavailable/i.test(candidate.message ?? "")
+    /timeout|temporar|unavailable|abort/i.test(candidate.message ?? "")
   );
 }
 

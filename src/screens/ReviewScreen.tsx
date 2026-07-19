@@ -40,7 +40,7 @@ export function ReviewScreen({
       <div className="review-heading">
         <div>
           <button className="text-back" onClick={onNext}>
-            <ArrowLeft size={15} /> Camera
+            <ArrowLeft size={14} /> Camera
           </button>
           <h2>{review.worksheetTitle || `Page ${page.number}`}</h2>
           <p>{review.summary}</p>
@@ -51,12 +51,12 @@ export function ReviewScreen({
             <i />
           </div>
           <button className="next-button" onClick={onNext}>
-            Next page <ChevronRight size={17} />
+            Next Page <ChevronRight size={15} />
           </button>
         </div>
       </div>
       <div className="session-pages">
-        <span>THIS SESSION</span>
+        <span>This session</span>
         {pages.map((item) => (
           <button
             className={item.id === page.id ? "active" : ""}
@@ -67,19 +67,19 @@ export function ReviewScreen({
           </button>
         ))}
         <button className="add-page" onClick={onNext}>
-          + New page
+          + New Page
         </button>
       </div>
       {error && (
         <div className="error-banner">
-          <X size={16} />
+          <X size={14} />
           {error}
         </div>
       )}
       <div className="review-grid">
         <section className="panel scan-panel">
           <div className="panel-title">
-            <span>ORIGINAL SCAN</span>
+            <span>Original scan</span>
             <small>Page {page.number}</small>
           </div>
           <div className="scan-paper">
@@ -91,9 +91,9 @@ export function ReviewScreen({
         </section>
         <section className="panel results-panel">
           <div className="panel-title">
-            <span>EXTRACTED WORK</span>
+            <span>Extracted work</span>
             <div className="score">
-              <b>{correct}</b> / {review.problems.length} correct
+              <b>{correct}</b> of {review.problems.length} correct
             </div>
           </div>
           <div className="problem-list">
@@ -136,7 +136,7 @@ export function ReviewScreen({
                       </>
                     ) : (
                       <>
-                        <ScanLine size={12} /> Please confirm handwriting
+                        <ScanLine size={12} /> Confirm the handwriting
                         {problem.verificationNote
                           ? ` — ${problem.verificationNote}`
                           : ""}
@@ -180,7 +180,7 @@ export function ReviewScreen({
                   </button>
                   <button
                     className={problem.manualIsCorrect == null ? "active" : ""}
-                    title="Use automatic grade"
+                    title="Use the automatic grade"
                     onClick={() =>
                       onUpdate(index, {
                         manualIsCorrect: null,
@@ -207,10 +207,10 @@ export function ReviewScreen({
             <button disabled={busy} onClick={onSave}>
               {saved ? (
                 <>
-                  <Check size={15} /> Saved
+                  <Check size={14} /> Saved
                 </>
               ) : (
-                "Save corrections"
+                "Save Corrections"
               )}
             </button>
           </div>

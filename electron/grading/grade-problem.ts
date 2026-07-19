@@ -19,7 +19,36 @@ export function normalizeMathExpression(source: string) {
     .trim();
 }
 
+function resolveConstantExponent(node: MathNode | undefined): number | null {
+  if (!node) return null;
+  if (node.type === "ParenthesisNode")
+    return resolveConstantExponent(
+      (node as MathNode & { content: MathNode }).content,
+    );
+  // Under the Fraction config, toString() renders "3/1"; the value itself
+  // converts cleanly through Number().
+  if (node.type === "ConstantNode")
+    return Number((node as MathNode & { value: unknown }).value);
+  if (node.type === "OperatorNode") {
+    const operator = node as MathNode & { op: string; args: MathNode[] };
+    if (operator.op === "-" && operator.args.length === 1) {
+      const inner = resolveConstantExponent(operator.args[0]);
+      return inner === null ? null : -inner;
+    }
+  }
+  return null;
+}
+
 function parseRestricted(source: string) {
+  // A space between two digits is usually a mixed number ("2 1/2") or an OCR
+  // artifact; collapsing it would silently grade a different expression
+  // ("21/2"), so send it to manual review instead.
+  const spacingProbe = String(source)
+    .replace(/[=？?].*$/, "")
+    .replace(/,/g, "");
+  if (/\d\s+\d/.test(spacingProbe))
+    throw new Error("Ambiguous spacing in math expression");
+
   const normalized = normalizeMathExpression(source);
   if (!normalized || normalized.length > 500)
     throw new Error("Unsupported math expression");
@@ -38,10 +67,9 @@ function parseRestricted(source: string) {
     if (!ALLOWED_OPERATORS.has(operator.op))
       throw new Error(`Unsupported operator: ${operator.op}`);
     if (operator.op === "^") {
-      const exponent = operator.args[1];
-      if (!exponent || exponent.type !== "ConstantNode")
+      const numericExponent = resolveConstantExponent(operator.args[1]);
+      if (numericExponent === null)
         throw new Error("Exponent must be a constant");
-      const numericExponent = Number(exponent.toString());
       if (
         !Number.isInteger(numericExponent) ||
         Math.abs(numericExponent) > 12

@@ -41,6 +41,21 @@ describe("local arithmetic grading", () => {
     }
   });
 
+  it("sends mixed-number spacing to manual review instead of misgrading it", () => {
+    expect(gradeLocally("2 1/2 + 1/2", "3").gradingMethod).toBe(
+      "manual-required",
+    );
+    expect(gradeLocally("13 + 4", "1 7").gradingMethod).toBe("manual-required");
+  });
+
+  it("grades parenthesized and negative constant exponents", () => {
+    expect(gradeLocally("2^(3)", "8").isCorrect).toBe(true);
+    expect(gradeLocally("2^-3", "1/8")).toMatchObject({
+      correctAnswer: "1/8",
+      isCorrect: true,
+    });
+  });
+
   it("persists manual overrides for unsupported work", () => {
     expect(gradeLocally("x + 1", "4", true)).toMatchObject({
       calculatedIsCorrect: null,

@@ -53,7 +53,17 @@ export function registerIpcHandlers(options: {
 
   handle("session:start", async () => {
     const activeSessionId = getActiveSessionId();
-    if (activeSessionId) return repository.loadSession(activeSessionId, false);
+    if (activeSessionId) {
+      try {
+        return await repository.loadSession(activeSessionId, false);
+      } catch (error) {
+        console.warn(
+          `Replacing unloadable active session ${activeSessionId}:`,
+          error,
+        );
+        setActiveSessionId(null);
+      }
+    }
     const created = await repository.createSession();
     setActiveSessionId(created.id);
     return { ...created, pages: [] };
@@ -69,9 +79,14 @@ export function registerIpcHandlers(options: {
   handle("session:end", async () => {
     const id = getActiveSessionId();
     if (!id) return null;
-    const ended = await repository.endSession(id);
-    setActiveSessionId(null);
-    return { ...ended, pages: [] };
+    try {
+      const ended = await repository.endSession(id);
+      return { ...ended, pages: [] };
+    } finally {
+      // Never leave the app stuck in a session whose metadata cannot be
+      // stamped; endedAt: null is already a tolerated crash-recovery state.
+      setActiveSessionId(null);
+    }
   });
 
   handle("image:choose", async (event) => {
@@ -142,7 +157,6 @@ export function registerIpcHandlers(options: {
       const analysis = await ocr.review(imageBytes);
       await repository.commitPage(
         activeSessionId,
-        prepared.metadata,
         prepared.page,
         analysis.review,
         analysis,
@@ -161,10 +175,11 @@ export function registerIpcHandlers(options: {
 
   handle("page:update", async (_event, rawPayload) => {
     const payload = UpdatePagePayloadSchema.parse(rawPayload);
+    // Keep the review's own `model` field: it records which model performed
+    // the OCR, not which model is currently configured.
     const review: Review = {
       ...gradeReview(payload.review),
       schemaVersion: SESSION_SCHEMA_VERSION,
-      model: ocr.model,
       editedAt: new Date().toISOString(),
     };
     return repository.updateReview(payload.sessionId, payload.pageId, review);

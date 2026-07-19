@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import { Aperture, ImagePlus, LoaderCircle, X } from "lucide-react";
+import { Camera, ImagePlus, LoaderCircle, X } from "lucide-react";
 
 export function CameraScreen({
   videoRef,
@@ -17,11 +17,10 @@ export function CameraScreen({
   return (
     <div className="camera-stage">
       <div className="camera-copy">
-        <span className="step-pill">PAGE READY</span>
-        <h2>Line up the worksheet</h2>
+        <h2>Position the worksheet</h2>
         <p>
-          Keep all four corners inside the guide. The camera stays active after
-          every review.
+          Keep all four corners inside the guides. The camera stays on between
+          pages.
         </p>
       </div>
       <div className="camera-frame">
@@ -40,16 +39,14 @@ export function CameraScreen({
       </div>
       {error && (
         <div className="error-banner">
-          <X size={16} />
+          <X size={14} />
           <span>{error}</span>
-          <button onClick={onReview}>Retry page</button>
+          <button onClick={onReview}>Retry</button>
         </div>
       )}
       <button className="capture-button" disabled={busy} onClick={onReview}>
-        <span>
-          <Aperture size={25} />
-        </span>
-        {busy ? "Reviewing…" : "Capture & review"}
+        <Camera size={15} />
+        {busy ? "Reviewing…" : "Capture Page"}
         <kbd>Space</kbd>
       </button>
       <button
@@ -57,7 +54,7 @@ export function CameraScreen({
         disabled={busy}
         onClick={onChooseImage}
       >
-        <ImagePlus size={16} /> Choose a photo
+        <ImagePlus size={14} /> Choose Photo…
       </button>
     </div>
   );

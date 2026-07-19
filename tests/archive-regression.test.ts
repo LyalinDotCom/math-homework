@@ -74,6 +74,7 @@ describe.skipIf(!hasArchive)("saved archive regression", () => {
           const result = gradeLocally(
             problem.expression,
             problem.studentAnswer,
+            problem.manualIsCorrect,
           );
           checkedProblems += 1;
           if (

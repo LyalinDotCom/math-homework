@@ -43,36 +43,30 @@ describe("human-readable session repository", () => {
       ],
       gradingMethod: "local-arithmetic",
     };
-    await repository.commitPage(
-      session.id,
-      prepared.metadata,
-      prepared.page,
-      review,
-      {
-        transcription: {
-          worksheetTitle: "Test page",
-          problems: [
-            {
-              number: "1",
-              expression: "2 + 2",
-              studentAnswer: "4",
-              confidence: 1,
-            },
-          ],
-        },
-        verification: {
-          problems: [
-            {
-              index: 0,
-              studentAnswer: "4",
-              confidence: 1,
-              needsConfirmation: false,
-              verificationNote: "Agreed.",
-            },
-          ],
-        },
+    await repository.commitPage(session.id, prepared.page, review, {
+      transcription: {
+        worksheetTitle: "Test page",
+        problems: [
+          {
+            number: "1",
+            expression: "2 + 2",
+            studentAnswer: "4",
+            confidence: 1,
+          },
+        ],
       },
-    );
+      verification: {
+        problems: [
+          {
+            index: 0,
+            studentAnswer: "4",
+            confidence: 1,
+            needsConfirmation: false,
+            verificationNote: "Agreed.",
+          },
+        ],
+      },
+    });
 
     const loaded = await repository.loadSession(session.id, false);
     expect(loaded.pages).toHaveLength(1);
