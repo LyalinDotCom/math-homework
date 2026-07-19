@@ -395,6 +395,26 @@ input:focus-visible {
   opacity: 0.7;
   cursor: wait;
 }
+.choose-image-button {
+  margin: 11px auto 0;
+  border: 0;
+  background: transparent;
+  color: #6f6d66;
+  font-size: 12px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.choose-image-button:hover {
+  color: var(--orange);
+}
+.choose-image-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
 .error-banner {
   max-width: 900px;
   margin: 16px auto 0;

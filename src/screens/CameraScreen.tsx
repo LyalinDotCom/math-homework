@@ -1,15 +1,17 @@
 import type { RefObject } from "react";
-import { Aperture, LoaderCircle, X } from "lucide-react";
+import { Aperture, ImagePlus, LoaderCircle, X } from "lucide-react";
 
 export function CameraScreen({
   videoRef,
   busy,
   onReview,
+  onChooseImage,
   error,
 }: {
   videoRef: RefObject<HTMLVideoElement | null>;
   busy: boolean;
   onReview(): void;
+  onChooseImage(): void;
   error: string;
 }) {
   return (
@@ -49,6 +51,13 @@ export function CameraScreen({
         </span>
         {busy ? "Reviewing…" : "Capture & review"}
         <kbd>Space</kbd>
+      </button>
+      <button
+        className="choose-image-button"
+        disabled={busy}
+        onClick={onChooseImage}
+      >
+        <ImagePlus size={16} /> Choose a photo
       </button>
     </div>
   );

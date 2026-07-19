@@ -8,6 +8,7 @@ declare global {
         sessionId: string,
       ): Promise<import("../shared/contracts").Session>;
       endSession(): Promise<import("../shared/contracts").Session | null>;
+      chooseImage(): Promise<string | null>;
       reviewPage(
         imageDataUrl: string,
       ): Promise<import("../shared/contracts").Page & { sessionId: string }>;

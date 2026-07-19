@@ -1,4 +1,13 @@
-import { ipcMain, shell, type IpcMainInvokeEvent } from "electron";
+import fs from "node:fs/promises";
+import path from "node:path";
+import {
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  nativeImage,
+  shell,
+  type IpcMainInvokeEvent,
+} from "electron";
 import {
   ReviewImagePayloadSchema,
   SESSION_ID_PATTERN,
@@ -63,6 +72,50 @@ export function registerIpcHandlers(options: {
     const ended = await repository.endSession(id);
     setActiveSessionId(null);
     return { ...ended, pages: [] };
+  });
+
+  handle("image:choose", async (event) => {
+    const owner = BrowserWindow.fromWebContents(event.sender);
+    if (!owner) throw new Error("Could not open the image picker");
+    const selection = await dialog.showOpenDialog(owner, {
+      title: "Choose a worksheet photo",
+      properties: ["openFile"],
+      filters: [
+        { name: "Worksheet images", extensions: ["jpg", "jpeg", "png"] },
+      ],
+    });
+    if (selection.canceled || selection.filePaths.length !== 1) return null;
+
+    const selectedFile = selection.filePaths[0];
+    if (!/\.(?:jpe?g|png)$/i.test(path.extname(selectedFile))) {
+      throw new Error("Choose a JPEG or PNG image");
+    }
+    const file = await fs.stat(selectedFile);
+    if (!file.isFile() || file.size < 1_000 || file.size > 30 * 1024 * 1024) {
+      throw new Error("Selected image size is invalid");
+    }
+
+    const decoded = nativeImage.createFromPath(selectedFile);
+    if (decoded.isEmpty())
+      throw new Error("The selected image could not be read");
+    const { width, height } = decoded.getSize();
+    if (width < 200 || height < 200 || width * height > 80_000_000) {
+      throw new Error("Selected image dimensions are invalid");
+    }
+    const scale = Math.min(1, 4_096 / width, 4_096 / height);
+    const normalized =
+      scale < 1
+        ? decoded.resize({
+            width: Math.round(width * scale),
+            height: Math.round(height * scale),
+            quality: "best",
+          })
+        : decoded;
+    const jpeg = normalized.toJPEG(92);
+    if (jpeg.length < 1_000 || jpeg.length > 18 * 1024 * 1024) {
+      throw new Error("Selected image could not be normalized safely");
+    }
+    return `data:image/jpeg;base64,${jpeg.toString("base64")}`;
   });
 
   handle("page:review", async (_event, rawImageDataUrl) => {

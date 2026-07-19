@@ -6,7 +6,8 @@ ordinary JPEG or formatted JSON file on the Mac.
 
 ## How a page moves through the app
 
-1. React requests camera video and captures the worksheet as a JPEG.
+1. React captures the worksheet camera as a JPEG, or asks Electron to open the
+   native JPEG/PNG picker and normalize the chosen photo to a bounded JPEG.
 2. The sandboxed preload exposes a narrow IPC API; it does not expose Node.js.
 3. The Electron main process validates the JPEG data URL and writes the original
    image before making a remote request.

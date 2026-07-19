@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld("mathHomework", {
   resumeSession: (sessionId: string) =>
     ipcRenderer.invoke("session:resume", sessionId),
   endSession: () => ipcRenderer.invoke("session:end"),
+  chooseImage: () => ipcRenderer.invoke("image:choose"),
   reviewPage: (imageDataUrl: string) =>
     ipcRenderer.invoke("page:review", imageDataUrl),
   updatePage: (sessionId: string, pageId: string, review: unknown) =>

@@ -96,19 +96,35 @@ export default function App() {
         sourceWidth,
         sourceHeight,
       );
-      const result = await window.mathHomework.reviewPage(
-        canvas.toDataURL("image/jpeg", 0.92),
-      );
-      setPage(result);
-      setReview(result.review);
-      setSession((current) =>
-        current ? { ...current, pages: [...current.pages, result] } : current,
-      );
+      await reviewImage(canvas.toDataURL("image/jpeg", 0.92));
     } catch (cause) {
       setError(errorMessage(cause, "Review failed."));
     } finally {
       setBusy(false);
     }
+  }
+
+  async function chooseImageAndReview() {
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const imageDataUrl = await window.mathHomework.chooseImage();
+      if (imageDataUrl) await reviewImage(imageDataUrl);
+    } catch (cause) {
+      setError(errorMessage(cause, "Could not use the selected image."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function reviewImage(imageDataUrl: string) {
+    const result = await window.mathHomework.reviewPage(imageDataUrl);
+    setPage(result);
+    setReview(result.review);
+    setSession((current) =>
+      current ? { ...current, pages: [...current.pages, result] } : current,
+    );
   }
 
   async function hydratePage(sessionId: string, selectedPage: Page) {
@@ -321,6 +337,7 @@ export default function App() {
               videoRef={camera.videoRef}
               busy={busy}
               onReview={() => void captureAndReview()}
+              onChooseImage={() => void chooseImageAndReview()}
               error={error}
             />
           ) : (
