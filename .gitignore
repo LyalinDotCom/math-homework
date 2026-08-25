@@ -5,3 +5,6 @@ dist-electron/
 .env
 *.log
 .tmp/
+ios/MathHomework/Secrets.plist
+ios/build/
+xcuserdata/

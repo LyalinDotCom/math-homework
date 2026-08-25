@@ -1,0 +1,69 @@
+name: MathHomework
+options:
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: UYD6DYP53S
+    CODE_SIGN_STYLE: Automatic
+targets:
+  MathHomework:
+    type: application
+    platform: iOS
+    scheme:
+      testTargets:
+        - MathHomeworkTests
+        - MathHomeworkUITests
+    sources:
+      - path: MathHomework
+      - path: MathHomework/Secrets.plist
+        optional: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lyalin.mathhomework
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+    info:
+      path: MathHomework/Info.plist
+      properties:
+        CFBundleDisplayName: Math Homework
+        NSCameraUsageDescription: >-
+          Math Homework uses the camera to scan worksheet pages so the
+          answers can be checked.
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations~iphone:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        ITSAppUsesNonExemptEncryption: false
+  MathHomeworkTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MathHomeworkTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: MathHomework
+  MathHomeworkUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MathHomeworkUITests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: MathHomework

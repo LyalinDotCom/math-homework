@@ -1,0 +1,670 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		012BAE886C8B4250989646B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8B442402EEC278A3515D9FD /* Assets.xcassets */; };
+		22244BBAD05B6A7BF7AD4369 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0CE45BC03F79BE36AD837F /* SettingsView.swift */; };
+		265ABD37D00E90DF81F1CB39 /* ActiveSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79610964A11EA733B30C7590 /* ActiveSessionView.swift */; };
+		2FEACAD2AD84D6F01F144A8E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9C73DD23BD7E956F035DBC /* HomeView.swift */; };
+		34434F7EE07158B84E6DA3F5 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3779310B2EC8F0C9736FC002 /* DocumentScannerView.swift */; };
+		45BA94B8DF36A6F9CEA76B8C /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528B124653C2880B39CAC095 /* ZoomableImageView.swift */; };
+		48861ED9249488AF0939AF02 /* GradingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C26858F4BD29B8D7793F4 /* GradingTests.swift */; };
+		56DC11277E5217117D907766 /* WalkthroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0DE2588D66BE8FE5534129 /* WalkthroughUITests.swift */; };
+		5AB42B79A1312C8CC0A7A74A /* GeminiLiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FDD5F2E3E1517A23B3B179 /* GeminiLiveTests.swift */; };
+		65FDD4272B0E9C7197DE256F /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C35BEC9441CE3D72C8B11D1 /* KeychainStore.swift */; };
+		6AC56571FA1C80B38C414325 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D58815F049BE7761889BFAA /* ReviewView.swift */; };
+		77A4CE805D3F19219C212012 /* Contracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AEA91208280CEA9C9245E8A /* Contracts.swift */; };
+		7FD82BD9C12174BC1FCDCBE2 /* MathExpressionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */; };
+		8B169C82B7C3366C3E277937 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F87149ABEF1BBB7108AAA1 /* Haptics.swift */; };
+		93F4F5A4D2BC2A4362E8AA30 /* SessionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B891AE0FC0856217C463BD79 /* SessionRepository.swift */; };
+		954150601A84C44E3603B0A0 /* Grader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD8A497DF7255F7F26D35C10 /* Grader.swift */; };
+		9C30A92C2A21EF16376437EE /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B736BE686200E52980729 /* HistoryView.swift */; };
+		A56A84FE608DFF18A94AF35F /* WorksheetOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE58A47C47D3744D2B130B9 /* WorksheetOCR.swift */; };
+		B0BE2C504AA6B04A42F68301 /* ImageNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */; };
+		D8C88A9D7536C2C1C79B3FD2 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B390F79DFE286FCF14B85031 /* Fraction.swift */; };
+		E508F9A65AD3F1516107A5EC /* MathHomeworkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1B84226895C2166FC2CFE3 /* MathHomeworkApp.swift */; };
+		ED311962E124091152B26CA1 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EE7445423A61C0B2B5E324 /* AppModel.swift */; };
+		EFEB1E908B8C84A268C06181 /* GeminiSchemas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76292FF941AF711EE31E5FE1 /* GeminiSchemas.swift */; };
+		F5528B6A736AB4B206B0EB63 /* Prompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBB04F16E1498CACACA83D /* Prompts.swift */; };
+		F85AA076569842C84E52A736 /* GeminiInteractionsClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2156F4F01CC1480FB7372B65 /* GeminiInteractionsClient.swift */; };
+		FED1438E3820526C3BA31FD7 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2467727055902537921847C5 /* Secrets.plist */; };
+		FFD1AB8DFF1DBBB76D1040B4 /* Thumbnailer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F54341E44C44832D52405D4 /* Thumbnailer.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4FADD8CD28304B3686095619 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62AF5F10DE2D09F680724CC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4554404BA30934348A727B90;
+			remoteInfo = MathHomework;
+		};
+		FDAC62688010A71D24FC6B59 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 62AF5F10DE2D09F680724CC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4554404BA30934348A727B90;
+			remoteInfo = MathHomework;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0D58815F049BE7761889BFAA /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		1F54341E44C44832D52405D4 /* Thumbnailer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thumbnailer.swift; sourceTree = "<group>"; };
+		2156F4F01CC1480FB7372B65 /* GeminiInteractionsClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiInteractionsClient.swift; sourceTree = "<group>"; };
+		2467727055902537921847C5 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
+		2F1B84226895C2166FC2CFE3 /* MathHomeworkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHomeworkApp.swift; sourceTree = "<group>"; };
+		3779310B2EC8F0C9736FC002 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerView.swift; sourceTree = "<group>"; };
+		3FFBB04F16E1498CACACA83D /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
+		4C0DE2588D66BE8FE5534129 /* WalkthroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughUITests.swift; sourceTree = "<group>"; };
+		4C35BEC9441CE3D72C8B11D1 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		528B124653C2880B39CAC095 /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
+		52DDA035663D30B1808C3531 /* MathHomeworkTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MathHomeworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C7C26858F4BD29B8D7793F4 /* GradingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradingTests.swift; sourceTree = "<group>"; };
+		60FDD5F2E3E1517A23B3B179 /* GeminiLiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLiveTests.swift; sourceTree = "<group>"; };
+		61EE7445423A61C0B2B5E324 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		648AC6067509388C4B5F9F39 /* MathHomework.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MathHomework.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		76292FF941AF711EE31E5FE1 /* GeminiSchemas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiSchemas.swift; sourceTree = "<group>"; };
+		79610964A11EA733B30C7590 /* ActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionView.swift; sourceTree = "<group>"; };
+		7D1132E4E07E8A58F714CFE6 /* MathHomeworkUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MathHomeworkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AEA91208280CEA9C9245E8A /* Contracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contracts.swift; sourceTree = "<group>"; };
+		8FC06976B7171CD98BB6A461 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNormalizer.swift; sourceTree = "<group>"; };
+		9AE58A47C47D3744D2B130B9 /* WorksheetOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorksheetOCR.swift; sourceTree = "<group>"; };
+		A7F87149ABEF1BBB7108AAA1 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		B390F79DFE286FCF14B85031 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fraction.swift; sourceTree = "<group>"; };
+		B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathExpressionParser.swift; sourceTree = "<group>"; };
+		B891AE0FC0856217C463BD79 /* SessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRepository.swift; sourceTree = "<group>"; };
+		B8B442402EEC278A3515D9FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CD8A497DF7255F7F26D35C10 /* Grader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grader.swift; sourceTree = "<group>"; };
+		DE0CE45BC03F79BE36AD837F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		EC9C73DD23BD7E956F035DBC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		EE9B736BE686200E52980729 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00614F592F3504C7A5541903 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				79610964A11EA733B30C7590 /* ActiveSessionView.swift */,
+				3779310B2EC8F0C9736FC002 /* DocumentScannerView.swift */,
+				EE9B736BE686200E52980729 /* HistoryView.swift */,
+				EC9C73DD23BD7E956F035DBC /* HomeView.swift */,
+				0D58815F049BE7761889BFAA /* ReviewView.swift */,
+				DE0CE45BC03F79BE36AD837F /* SettingsView.swift */,
+				528B124653C2880B39CAC095 /* ZoomableImageView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		25A2C75CF71A7BC746595709 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				4C35BEC9441CE3D72C8B11D1 /* KeychainStore.swift */,
+				B891AE0FC0856217C463BD79 /* SessionRepository.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		2A09BC026A14B668C28F4DE3 /* Gemini */ = {
+			isa = PBXGroup;
+			children = (
+				2156F4F01CC1480FB7372B65 /* GeminiInteractionsClient.swift */,
+				76292FF941AF711EE31E5FE1 /* GeminiSchemas.swift */,
+				3FFBB04F16E1498CACACA83D /* Prompts.swift */,
+				9AE58A47C47D3744D2B130B9 /* WorksheetOCR.swift */,
+			);
+			path = Gemini;
+			sourceTree = "<group>";
+		};
+		3728FBC0A492EE539BBD7AA7 /* MathHomeworkTests */ = {
+			isa = PBXGroup;
+			children = (
+				60FDD5F2E3E1517A23B3B179 /* GeminiLiveTests.swift */,
+				5C7C26858F4BD29B8D7793F4 /* GradingTests.swift */,
+			);
+			path = MathHomeworkTests;
+			sourceTree = "<group>";
+		};
+		3D04E038D8F69FF6607A92A0 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				2F1B84226895C2166FC2CFE3 /* MathHomeworkApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		510A33F9B7E7F230CD5ED003 /* MathHomework */ = {
+			isa = PBXGroup;
+			children = (
+				B8B442402EEC278A3515D9FD /* Assets.xcassets */,
+				8FC06976B7171CD98BB6A461 /* Info.plist */,
+				2467727055902537921847C5 /* Secrets.plist */,
+				3D04E038D8F69FF6607A92A0 /* App */,
+				2A09BC026A14B668C28F4DE3 /* Gemini */,
+				6A18497C62B55C40BF50CB66 /* Grading */,
+				CF7481D14DAB4BF85F9A37B4 /* Models */,
+				EAB13A762EC008C3E1E4CB8E /* State */,
+				25A2C75CF71A7BC746595709 /* Storage */,
+				EC6F6FA363260CA342EBC28F /* Support */,
+				00614F592F3504C7A5541903 /* Views */,
+			);
+			path = MathHomework;
+			sourceTree = "<group>";
+		};
+		6A18497C62B55C40BF50CB66 /* Grading */ = {
+			isa = PBXGroup;
+			children = (
+				B390F79DFE286FCF14B85031 /* Fraction.swift */,
+				CD8A497DF7255F7F26D35C10 /* Grader.swift */,
+				B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */,
+			);
+			path = Grading;
+			sourceTree = "<group>";
+		};
+		BFC5B46F81CE5EEDDAED836C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				648AC6067509388C4B5F9F39 /* MathHomework.app */,
+				52DDA035663D30B1808C3531 /* MathHomeworkTests.xctest */,
+				7D1132E4E07E8A58F714CFE6 /* MathHomeworkUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF7481D14DAB4BF85F9A37B4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8AEA91208280CEA9C9245E8A /* Contracts.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DC878619604F18FFC9040C02 /* MathHomeworkUITests */ = {
+			isa = PBXGroup;
+			children = (
+				4C0DE2588D66BE8FE5534129 /* WalkthroughUITests.swift */,
+			);
+			path = MathHomeworkUITests;
+			sourceTree = "<group>";
+		};
+		E9D46C82943D9FDAFC433EB0 = {
+			isa = PBXGroup;
+			children = (
+				510A33F9B7E7F230CD5ED003 /* MathHomework */,
+				3728FBC0A492EE539BBD7AA7 /* MathHomeworkTests */,
+				DC878619604F18FFC9040C02 /* MathHomeworkUITests */,
+				BFC5B46F81CE5EEDDAED836C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EAB13A762EC008C3E1E4CB8E /* State */ = {
+			isa = PBXGroup;
+			children = (
+				61EE7445423A61C0B2B5E324 /* AppModel.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		EC6F6FA363260CA342EBC28F /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				A7F87149ABEF1BBB7108AAA1 /* Haptics.swift */,
+				94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */,
+				1F54341E44C44832D52405D4 /* Thumbnailer.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		247BC4B21335F28C5B7483F4 /* MathHomeworkUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4EF583BA4E2B7488211A038E /* Build configuration list for PBXNativeTarget "MathHomeworkUITests" */;
+			buildPhases = (
+				458FE82694F755883DD56EC1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				35928A12A7202F322429F6C9 /* PBXTargetDependency */,
+			);
+			name = MathHomeworkUITests;
+			packageProductDependencies = (
+			);
+			productName = MathHomeworkUITests;
+			productReference = 7D1132E4E07E8A58F714CFE6 /* MathHomeworkUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		4554404BA30934348A727B90 /* MathHomework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4AB81DC4BEAEBD2A18C78097 /* Build configuration list for PBXNativeTarget "MathHomework" */;
+			buildPhases = (
+				8AC586B5ABA67BBAA3F4B1C3 /* Sources */,
+				F8D0775DA4962E79553A35DF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MathHomework;
+			packageProductDependencies = (
+			);
+			productName = MathHomework;
+			productReference = 648AC6067509388C4B5F9F39 /* MathHomework.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A3489EC58A14E01422386232 /* MathHomeworkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 223C433738CB0BA410A29029 /* Build configuration list for PBXNativeTarget "MathHomeworkTests" */;
+			buildPhases = (
+				BBCD6F94EF4A5D49F7940F1F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B1B162E8F25986EEE04BC27 /* PBXTargetDependency */,
+			);
+			name = MathHomeworkTests;
+			packageProductDependencies = (
+			);
+			productName = MathHomeworkTests;
+			productReference = 52DDA035663D30B1808C3531 /* MathHomeworkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		62AF5F10DE2D09F680724CC1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					247BC4B21335F28C5B7483F4 = {
+						DevelopmentTeam = UYD6DYP53S;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 4554404BA30934348A727B90;
+					};
+					4554404BA30934348A727B90 = {
+						DevelopmentTeam = UYD6DYP53S;
+						ProvisioningStyle = Automatic;
+					};
+					A3489EC58A14E01422386232 = {
+						DevelopmentTeam = UYD6DYP53S;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9C0A0FF3A18F506ADCF93F32 /* Build configuration list for PBXProject "MathHomework" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E9D46C82943D9FDAFC433EB0;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BFC5B46F81CE5EEDDAED836C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4554404BA30934348A727B90 /* MathHomework */,
+				A3489EC58A14E01422386232 /* MathHomeworkTests */,
+				247BC4B21335F28C5B7483F4 /* MathHomeworkUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8D0775DA4962E79553A35DF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				012BAE886C8B4250989646B6 /* Assets.xcassets in Resources */,
+				FED1438E3820526C3BA31FD7 /* Secrets.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		458FE82694F755883DD56EC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				56DC11277E5217117D907766 /* WalkthroughUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8AC586B5ABA67BBAA3F4B1C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				265ABD37D00E90DF81F1CB39 /* ActiveSessionView.swift in Sources */,
+				ED311962E124091152B26CA1 /* AppModel.swift in Sources */,
+				77A4CE805D3F19219C212012 /* Contracts.swift in Sources */,
+				34434F7EE07158B84E6DA3F5 /* DocumentScannerView.swift in Sources */,
+				D8C88A9D7536C2C1C79B3FD2 /* Fraction.swift in Sources */,
+				F85AA076569842C84E52A736 /* GeminiInteractionsClient.swift in Sources */,
+				EFEB1E908B8C84A268C06181 /* GeminiSchemas.swift in Sources */,
+				954150601A84C44E3603B0A0 /* Grader.swift in Sources */,
+				8B169C82B7C3366C3E277937 /* Haptics.swift in Sources */,
+				9C30A92C2A21EF16376437EE /* HistoryView.swift in Sources */,
+				2FEACAD2AD84D6F01F144A8E /* HomeView.swift in Sources */,
+				B0BE2C504AA6B04A42F68301 /* ImageNormalizer.swift in Sources */,
+				65FDD4272B0E9C7197DE256F /* KeychainStore.swift in Sources */,
+				7FD82BD9C12174BC1FCDCBE2 /* MathExpressionParser.swift in Sources */,
+				E508F9A65AD3F1516107A5EC /* MathHomeworkApp.swift in Sources */,
+				F5528B6A736AB4B206B0EB63 /* Prompts.swift in Sources */,
+				6AC56571FA1C80B38C414325 /* ReviewView.swift in Sources */,
+				93F4F5A4D2BC2A4362E8AA30 /* SessionRepository.swift in Sources */,
+				22244BBAD05B6A7BF7AD4369 /* SettingsView.swift in Sources */,
+				FFD1AB8DFF1DBBB76D1040B4 /* Thumbnailer.swift in Sources */,
+				A56A84FE608DFF18A94AF35F /* WorksheetOCR.swift in Sources */,
+				45BA94B8DF36A6F9CEA76B8C /* ZoomableImageView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBCD6F94EF4A5D49F7940F1F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AB42B79A1312C8CC0A7A74A /* GeminiLiveTests.swift in Sources */,
+				48861ED9249488AF0939AF02 /* GradingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1B1B162E8F25986EEE04BC27 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4554404BA30934348A727B90 /* MathHomework */;
+			targetProxy = FDAC62688010A71D24FC6B59 /* PBXContainerItemProxy */;
+		};
+		35928A12A7202F322429F6C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4554404BA30934348A727B90 /* MathHomework */;
+			targetProxy = 4FADD8CD28304B3686095619 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		416E0167A2F73057AF64F0B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MathHomework;
+			};
+			name = Release;
+		};
+		787318B521E4B0FC5405602B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = MathHomework/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyalin.mathhomework;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		79346FCF19E0C17A9E438E71 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MathHomework.app/MathHomework";
+			};
+			name = Debug;
+		};
+		90FAEA6E82D3473249A1EA3D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = UYD6DYP53S;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B6C0F855D691706FD46CF5BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MathHomework.app/MathHomework";
+			};
+			name = Release;
+		};
+		D6E0BEB255557EE6F7606E04 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = MathHomework/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lyalin.mathhomework;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC59A2F2B4450031E9BD4E49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = MathHomework;
+			};
+			name = Debug;
+		};
+		EEBE606C90D0AB357491227D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = UYD6DYP53S;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		223C433738CB0BA410A29029 /* Build configuration list for PBXNativeTarget "MathHomeworkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79346FCF19E0C17A9E438E71 /* Debug */,
+				B6C0F855D691706FD46CF5BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4AB81DC4BEAEBD2A18C78097 /* Build configuration list for PBXNativeTarget "MathHomework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D6E0BEB255557EE6F7606E04 /* Debug */,
+				787318B521E4B0FC5405602B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4EF583BA4E2B7488211A038E /* Build configuration list for PBXNativeTarget "MathHomeworkUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC59A2F2B4450031E9BD4E49 /* Debug */,
+				416E0167A2F73057AF64F0B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9C0A0FF3A18F506ADCF93F32 /* Build configuration list for PBXProject "MathHomework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90FAEA6E82D3473249A1EA3D /* Debug */,
+				EEBE606C90D0AB357491227D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 62AF5F10DE2D09F680724CC1 /* Project object */;
+}

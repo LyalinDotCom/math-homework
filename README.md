@@ -4,6 +4,9 @@ A camera-first Electron app that transcribes worksheet pages with Gemini and
 grades supported arithmetic locally. Every scan and result is stored as an
 ordinary JPEG or formatted JSON file on the Mac.
 
+There is also a native iPhone port in [ios/](ios/README.md) that shares the
+same archive format, prompts, and grading rules.
+
 ## How a page moves through the app
 
 1. React captures the worksheet camera as a JPEG, or asks Electron to open the
