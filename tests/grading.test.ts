@@ -1,10 +1,30 @@
 import { describe, expect, it } from "vitest";
 import {
   gradeLocally,
+  gradeProblem,
   normalizeMathExpression,
 } from "../electron/grading/grade-problem";
 
 describe("local arithmetic grading", () => {
+  it("preserves a phone review flag until the printed problem is confirmed", () => {
+    const problem = {
+      number: "1",
+      expression: "12 + 3",
+      studentAnswer: "15",
+      confidence: 0.95,
+      correctAnswer: "15",
+      isCorrect: true,
+      requiresExpressionConfirmation: true,
+    };
+    expect(gradeProblem(problem)).toMatchObject({
+      calculatedIsCorrect: null,
+      isCorrect: false,
+      gradingMethod: "manual-required",
+    });
+    expect(gradeProblem({ ...problem, manualIsCorrect: true }).isCorrect).toBe(
+      true,
+    );
+  });
   it("keeps OCR text separate from the calculated answer", () => {
     expect(gradeLocally("13 + 4", "7")).toMatchObject({
       correctAnswer: "17",

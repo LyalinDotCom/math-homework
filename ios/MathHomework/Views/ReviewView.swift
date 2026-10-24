@@ -56,6 +56,14 @@ struct ReviewView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    model.recheckPage(sessionId: sessionId, page: page)
+                } label: {
+                    Label("Read Again", systemImage: "arrow.clockwise")
+                }
+                .disabled(isDirty)
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { focusedField = nil }
@@ -147,7 +155,10 @@ struct ReviewView: View {
                     "Expression",
                     text: Binding(
                         get: { review.problems[index].expression },
-                        set: { review.problems[index].expression = $0 }
+                        set: {
+                            review.problems[index].expression = $0
+                            review.problems[index].requiresExpressionConfirmation = false
+                        }
                     )
                 )
                 .font(.body.weight(.semibold).monospacedDigit())
@@ -167,7 +178,7 @@ struct ReviewView: View {
                 }
 
                 if problem.handwritingVerified == true {
-                    Label("Second OCR pass agreed", systemImage: "checkmark.seal")
+                    Label("Independent readings agreed", systemImage: "checkmark.seal")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -181,8 +192,16 @@ struct ReviewView: View {
                     .foregroundStyle(.orange)
                 }
 
+                if problem.requiresExpressionConfirmation == true {
+                    Button("Confirm printed problem") {
+                        review.problems[index].requiresExpressionConfirmation = false
+                        review.problems[index].verificationNote = "Printed problem confirmed manually."
+                    }
+                    .font(.subheadline.weight(.semibold))
+                }
+
                 if !problem.isCorrect {
-                    (Text("Correct answer ")
+                    (Text(problem.calculatedIsCorrect == nil ? "Needs review: " : "Correct answer ")
                         .foregroundStyle(.secondary)
                         + Text(problem.correctAnswer).bold())
                         .font(.subheadline)
@@ -195,7 +214,8 @@ struct ReviewView: View {
         }
         .padding(.vertical, 4)
         .listRowBackground(
-            (problem.isCorrect ? Color.green : Color.red)
+            (problem.calculatedIsCorrect == nil && problem.manualIsCorrect == nil
+                ? Color.orange : (problem.isCorrect ? Color.green : Color.red))
                 .opacity(0.08)
                 .background(Color(.secondarySystemGroupedBackground))
         )
@@ -244,9 +264,11 @@ struct ReviewView: View {
             }
         } label: {
             VStack(spacing: 2) {
-                Image(systemName: problem.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+                Image(systemName: problem.calculatedIsCorrect == nil && problem.manualIsCorrect == nil
+                    ? "questionmark.circle.fill" : (problem.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill"))
                     .font(.title2)
-                    .foregroundStyle(problem.isCorrect ? Color.green : Color.red)
+                    .foregroundStyle(problem.calculatedIsCorrect == nil && problem.manualIsCorrect == nil
+                        ? Color.orange : (problem.isCorrect ? Color.green : Color.red))
                 if problem.manualIsCorrect != nil {
                     Text("manual")
                         .font(.caption2)

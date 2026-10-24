@@ -120,7 +120,7 @@ struct SessionRepository {
         for page in metadata.pages {
             try page.validateFileReferences()
             let paths = try pagePaths(sessionId: metadata.id, pageId: page.id)
-            let review = try readJSON(Review.self, from: paths.review)
+            let review = Grader.gradeReview(try readJSON(Review.self, from: paths.review))
             pages.append(SessionPage(metadata: page, review: review, imageURL: paths.image))
         }
         return Session(metadata: metadata, pages: pages)
@@ -204,6 +204,7 @@ struct SessionRepository {
         transcription: Transcription,
         verification: HandwritingVerification
     ) throws {
+        try page.validateFileReferences()
         let paths = try pagePaths(sessionId: sessionId, pageId: page.id)
         try writeJSON(transcription, to: paths.transcription)
         try writeJSON(verification, to: paths.verification)
@@ -213,8 +214,117 @@ struct SessionRepository {
         // any endedAt/resumedAt stamped meanwhile.
         var metadata = try readMetadata(sessionId)
         metadata.schemaVersion = Contracts.sessionSchemaVersion
-        metadata.pages.append(page)
+        if !metadata.pages.contains(where: { $0.id == page.id }) {
+            metadata.pages.append(page)
+            metadata.pages.sort { $0.number < $1.number }
+        }
         try writeJSON(metadata, to: metadataPath(sessionId))
+    }
+
+    // MARK: - Durable scan queue and independent-reading checkpoints
+
+    private func pendingURL(sessionId: String, pageId: String) throws -> URL {
+        guard Contracts.isValidPageId(pageId) else { throw RepositoryError.invalidIdentifier }
+        return try sessionDirectory(sessionId).appendingPathComponent("pending", isDirectory: true)
+            .appendingPathComponent(pageId + ".json")
+    }
+
+    func savePending(_ item: ScanItem) throws {
+        try item.page.validateFileReferences()
+        let url = try pendingURL(sessionId: item.sessionId, pageId: item.page.id)
+        try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try writeJSON(item, to: url)
+    }
+
+    func removePending(_ item: ScanItem) throws {
+        let url = try pendingURL(sessionId: item.sessionId, pageId: item.page.id)
+        if FileManager.default.fileExists(atPath: url.path) { try FileManager.default.removeItem(at: url) }
+    }
+
+    func loadPending() throws -> [ScanItem] {
+        try ensureRoot()
+        var items: [ScanItem] = []
+        for session in try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) {
+            let sessionId = session.lastPathComponent
+            guard Contracts.isValidSessionId(sessionId), let metadata = try? readMetadata(sessionId) else { continue }
+            let folder = session.appendingPathComponent("pending", isDirectory: true)
+            let files = (try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
+            for file in files where file.pathExtension == "json" {
+                do {
+                    var item = try readJSON(ScanItem.self, from: file)
+                    guard item.sessionId == sessionId, file.lastPathComponent == item.page.id + ".json" else {
+                        throw RepositoryError.invalidIdentifier
+                    }
+                    try item.page.validateFileReferences()
+                    // Commit may have succeeded just before the app stopped.
+                    if item.isRecheck != true, metadata.pages.contains(where: { $0.id == item.page.id }) {
+                        try removePending(item)
+                        continue
+                    }
+                    if item.status == .processing { item.status = .waiting }
+                    items.append(item)
+                } catch {
+                    OCRDiagnostics.record("pending_load_failed", fields: ["session": sessionId])
+                }
+            }
+            // Recover originals left behind by the older in-memory queue, or
+            // an interruption between saving an image and its queue record.
+            let images = (try? FileManager.default.contentsOfDirectory(
+                at: session.appendingPathComponent("pages"), includingPropertiesForKeys: nil
+            )) ?? []
+            for image in images where image.pathExtension == "jpg" {
+                let id = image.deletingPathExtension().lastPathComponent
+                guard Contracts.isValidPageId(id),
+                      !metadata.pages.contains(where: { $0.id == id }),
+                      !items.contains(where: { $0.sessionId == sessionId && $0.page.id == id }),
+                      let number = Int(id.dropFirst(5)) else { continue }
+                let page = PageMetadata(id: id, number: number, capturedAt: metadata.startedAt,
+                    imageFile: "pages/\(id).jpg", reviewFile: "pages/\(id).json",
+                    transcriptionFile: "pages/\(id).transcription.json", verificationFile: "pages/\(id).verification.json")
+                let item = ScanItem(sessionId: sessionId, page: page)
+                try savePending(item)
+                items.append(item)
+            }
+        }
+        return items.sorted { $0.id < $1.id }
+    }
+
+    private func readingURL(_ item: ScanItem, second: Bool) throws -> URL {
+        let image = try imageURL(sessionId: item.sessionId, pageId: item.page.id)
+        return image.deletingPathExtension().appendingPathExtension(second ? "reading-2.json" : "reading-1.json")
+    }
+
+    func saveReading(_ reading: Transcription, item: ScanItem, second: Bool) throws {
+        try reading.validate()
+        try writeJSON(reading, to: readingURL(item, second: second))
+    }
+
+    func loadReading(_ item: ScanItem, second: Bool) -> Transcription? {
+        guard let url = try? readingURL(item, second: second),
+              let reading = try? readJSON(Transcription.self, from: url),
+              (try? reading.validate()) != nil else { return nil }
+        return reading
+    }
+
+    func clearReadings(_ item: ScanItem) throws {
+        for second in [false, true] {
+            let url = try readingURL(item, second: second)
+            if FileManager.default.fileExists(atPath: url.path) { try FileManager.default.removeItem(at: url) }
+        }
+    }
+
+    func discardPending(_ item: ScanItem) throws {
+        // Never remove a committed page when cleaning up a stale queue entry.
+        guard !(try readMetadata(item.sessionId)).pages.contains(where: { $0.id == item.page.id }) else {
+            try removePending(item)
+            return
+        }
+        for second in [false, true] {
+            let url = try readingURL(item, second: second)
+            if FileManager.default.fileExists(atPath: url.path) { try FileManager.default.removeItem(at: url) }
+        }
+        discardPreparedPage(sessionId: item.sessionId, pageId: item.page.id)
+        try removePending(item)
     }
 
     func discardPreparedPage(sessionId: String, pageId: String) {

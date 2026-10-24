@@ -17,6 +17,11 @@ enum Grader {
         manualIsCorrect: Bool?
     ) -> Outcome {
         do {
+            if let answer = try WorksheetMath.evaluate(expression: expression, studentAnswer: studentAnswer) {
+                return Outcome(correctAnswer: answer.text, calculatedIsCorrect: answer.matches,
+                    manualIsCorrect: manualIsCorrect, isCorrect: manualIsCorrect ?? answer.matches,
+                    gradingMethod: .localArithmetic)
+            }
             let correct = try MathExpression.evaluate(expression)
             let trimmedAnswer = studentAnswer.trimmingCharacters(in: .whitespacesAndNewlines)
             let student = trimmedAnswer.isEmpty ? nil : try MathExpression.evaluate(trimmedAnswer)
@@ -54,6 +59,12 @@ enum Grader {
         graded.manualIsCorrect = outcome.manualIsCorrect
         graded.isCorrect = outcome.isCorrect
         graded.gradingMethod = outcome.gradingMethod
+        if problem.requiresExpressionConfirmation == true, problem.manualIsCorrect == nil {
+            graded.calculatedIsCorrect = nil
+            graded.isCorrect = false
+            graded.gradingMethod = .manualRequired
+            graded.correctAnswer = "Confirm the printed problem"
+        }
         return graded
     }
 
@@ -61,7 +72,9 @@ enum Grader {
         var graded = review
         graded.problems = review.problems.map(gradeProblem)
         let correctCount = graded.problems.filter(\.isCorrect).count
+        let manual = graded.problems.filter { $0.calculatedIsCorrect == nil && $0.manualIsCorrect == nil }.count
         graded.summary = "\(correctCount) of \(graded.problems.count) answers correct."
+        if manual > 0 { graded.summary += " \(manual) need manual review." }
         graded.gradingMethod = .localArithmetic
         return graded
     }

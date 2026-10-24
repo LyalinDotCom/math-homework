@@ -10,6 +10,17 @@ struct HomeView: View {
         @Bindable var model = model
         NavigationStack {
             List {
+                if !model.pendingSessionIds.isEmpty {
+                    Section("Unfinished scans are saved") {
+                        ForEach(model.pendingSessionIds, id: \.self) { id in
+                            Button {
+                                model.resumeSession(id)
+                            } label: {
+                                Label("Resume \(model.scanQueue.filter { $0.sessionId == id }.count) unfinished pages", systemImage: "arrow.clockwise.circle")
+                            }
+                        }
+                    }
+                }
                 if !model.hasAPIKey {
                     Section {
                         Button {
@@ -55,7 +66,7 @@ struct HomeView: View {
 
                 Section {
                 } footer: {
-                    Text("Saved on this iPhone · Graded locally · OCR by Gemini 3.5 Flash")
+                    Text("Saved on this iPhone · Graded locally · OCR by Gemini 3.8 Flash")
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                 }
@@ -95,7 +106,7 @@ struct HomeView: View {
         .alert(
             "Something went wrong",
             isPresented: Binding(
-                get: { model.lastError != nil },
+                get: { model.lastError != nil && model.activeSession == nil },
                 set: { if !$0 { model.lastError = nil } }
             )
         ) {

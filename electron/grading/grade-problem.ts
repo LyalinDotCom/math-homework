@@ -120,6 +120,18 @@ export function gradeLocally(
 }
 
 export function gradeProblem(problem: Problem): Problem {
+  if (
+    problem.requiresExpressionConfirmation &&
+    problem.manualIsCorrect == null
+  ) {
+    return {
+      ...problem,
+      correctAnswer: "Confirm the printed problem",
+      calculatedIsCorrect: null,
+      isCorrect: false,
+      gradingMethod: "manual-required",
+    };
+  }
   return {
     ...problem,
     ...gradeLocally(

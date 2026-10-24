@@ -7,6 +7,7 @@ import VisionKit
 struct DocumentScannerView: UIViewControllerRepresentable {
     var onFinish: ([UIImage]) -> Void
     var onCancel: () -> Void
+    var onError: (String) -> Void = { _ in }
 
     static var isSupported: Bool {
         VNDocumentCameraViewController.isSupported
@@ -21,16 +22,18 @@ struct DocumentScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_ controller: VNDocumentCameraViewController, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onFinish: onFinish, onCancel: onCancel)
+        Coordinator(onFinish: onFinish, onCancel: onCancel, onError: onError)
     }
 
     final class Coordinator: NSObject, VNDocumentCameraViewControllerDelegate {
         let onFinish: ([UIImage]) -> Void
         let onCancel: () -> Void
+        let onError: (String) -> Void
 
-        init(onFinish: @escaping ([UIImage]) -> Void, onCancel: @escaping () -> Void) {
+        init(onFinish: @escaping ([UIImage]) -> Void, onCancel: @escaping () -> Void, onError: @escaping (String) -> Void) {
             self.onFinish = onFinish
             self.onCancel = onCancel
+            self.onError = onError
         }
 
         func documentCameraViewController(
@@ -54,7 +57,7 @@ struct DocumentScannerView: UIViewControllerRepresentable {
             _ controller: VNDocumentCameraViewController,
             didFailWithError error: Error
         ) {
-            onCancel()
+            onError(error.localizedDescription)
         }
     }
 }

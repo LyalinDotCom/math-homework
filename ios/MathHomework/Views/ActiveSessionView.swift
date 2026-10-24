@@ -7,8 +7,8 @@ struct ActiveSessionView: View {
     @Environment(AppModel.self) private var model
     @State private var showsScanner = false
     @State private var photoSelection: [PhotosPickerItem] = []
-    @State private var confirmsEarlyDone = false
     @State private var autoOpenedScanner = false
+    @State private var retakingItemId: String?
 
     private var session: Session? { model.activeSession }
 
@@ -27,14 +27,11 @@ struct ActiveSessionView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        if model.isQueueBusy {
-                            confirmsEarlyDone = true
-                        } else {
-                            finish()
-                        }
+                        finish()
                     } label: {
                         Text("Done").bold()
                     }
+                    .disabled(model.importingCount > 0 || !photoSelection.isEmpty)
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -54,29 +51,33 @@ struct ActiveSessionView: View {
             DocumentScannerView { images in
                 showsScanner = false
                 Haptics.tap()
-                model.enqueue(images: images)
+                model.enqueue(images: images, replacing: retakingItemId)
+                retakingItemId = nil
             } onCancel: {
                 showsScanner = false
+                retakingItemId = nil
+            } onError: { message in
+                showsScanner = false
+                retakingItemId = nil
+                model.lastError = message
             }
             .ignoresSafeArea()
-        }
-        .confirmationDialog(
-            "Some pages are still being read.",
-            isPresented: $confirmsEarlyDone,
-            titleVisibility: .visible
-        ) {
-            Button("Finish Anyway", role: .destructive) { finish() }
-            Button("Keep Scanning", role: .cancel) {}
-        } message: {
-            Text("Unfinished pages will be discarded.")
         }
         .onAppear {
             guard !autoOpenedScanner else { return }
             autoOpenedScanner = true
-            if let session, session.pages.isEmpty, model.scanQueue.isEmpty,
+            if let session, session.pages.isEmpty, model.currentQueue.isEmpty,
                DocumentScannerView.isSupported {
                 showsScanner = true
             }
+        }
+        .alert("Could not complete the scan", isPresented: Binding(
+            get: { model.lastError != nil },
+            set: { if !$0 { model.lastError = nil } }
+        )) {
+            Button("OK", role: .cancel) { model.lastError = nil }
+        } message: {
+            Text(model.lastError ?? "")
         }
     }
 
@@ -97,18 +98,24 @@ struct ActiveSessionView: View {
 
     @ViewBuilder
     private func workspaceList(_ session: Session) -> some View {
-        if session.pages.isEmpty && model.scanQueue.isEmpty {
+        if session.pages.isEmpty && model.currentQueue.isEmpty && model.importingCount == 0 {
             ContentUnavailableView {
                 Label("Scan the first page", systemImage: "doc.viewfinder")
             } description: {
                 Text(
                     DocumentScannerView.isSupported
-                        ? "Hold your iPhone over the worksheet. Pages are captured automatically and checked one by one."
+                        ? "Hold your iPhone over the worksheet. Up to three pages are checked at once, with two independent readings per page."
                         : "This device has no camera scanner — add worksheet photos from your library instead."
                 )
             }
         } else {
             List {
+                if model.importingCount > 0 {
+                    Label("Saving \(model.importingCount) captured pages…", systemImage: "square.and.arrow.down")
+                }
+                if !model.isConnected {
+                    Label("Offline — scans are saved and resume when connected.", systemImage: "wifi.slash")
+                }
                 if !session.pages.isEmpty {
                     Section("Checked pages") {
                         ForEach(session.pages) { page in
@@ -118,11 +125,21 @@ struct ActiveSessionView: View {
                         }
                     }
                 }
-                if !model.scanQueue.isEmpty {
-                    Section("Reading") {
-                        ForEach(model.scanQueue) { item in
-                            ScanQueueRow(item: item)
+                if !model.currentQueue.isEmpty {
+                    Section {
+                        ForEach(model.currentQueue) { item in
+                            ScanQueueRow(item: item) { id in
+                                retakingItemId = id
+                                showsScanner = true
+                            }
                         }
+                        if model.currentQueue.contains(where: { if case .failed = $0.status { return true }; return false }) {
+                            Button("Retry All Failed Pages") { model.retryFailed() }
+                        }
+                    } header: {
+                        Text("Reading")
+                    } footer: {
+                        Text("Scans and completed readings are saved. You can tap Done or switch apps; unfinished work resumes when you return.")
                     }
                 }
             }
@@ -210,20 +227,24 @@ private struct PageRow: View {
 private struct ScanQueueRow: View {
     @Environment(AppModel.self) private var model
     let item: ScanItem
+    var retake: (String) -> Void
     @State private var thumbnail: UIImage?
+    @State private var showsScan = false
 
     var body: some View {
         HStack(spacing: 12) {
-            PageThumbnail(image: thumbnail)
+            Button { showsScan = true } label: { PageThumbnail(image: thumbnail) }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("View saved scan for page \(item.page.number)")
             switch item.status {
             case .waiting:
-                Text("Waiting…")
+                Text(model.isConnected ? "Saved · Waiting…" : "Saved · Waiting for connection")
                     .foregroundStyle(.secondary)
             case .processing:
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Reading the page")
+                    Text("Reading page \(item.page.number)")
                         .font(.body.weight(.medium))
-                    Text("Transcribing and checking each answer…")
+                    Text(item.completedReadings == 1 ? "One reading saved · finishing the double check…" : "Two independent readings in parallel…")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -238,6 +259,7 @@ private struct ScanQueueRow: View {
                     HStack(spacing: 16) {
                         Button("Retry") { model.retry(itemId: item.id) }
                             .font(.subheadline.weight(.semibold))
+                        if DocumentScannerView.isSupported { Button("Retake") { retake(item.id) } }
                         Button("Remove", role: .destructive) {
                             model.discard(itemId: item.id)
                         }
@@ -245,14 +267,30 @@ private struct ScanQueueRow: View {
                     }
                     .buttonStyle(.borderless)
                 }
+            case .qualityWarning(let message):
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Check image quality", systemImage: "camera.metering.unknown")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.orange)
+                    Text(message).font(.subheadline).foregroundStyle(.secondary)
+                    HStack(spacing: 16) {
+                        if DocumentScannerView.isSupported { Button("Retake") { retake(item.id) } }
+                        Button("Read Anyway") { model.retry(itemId: item.id, acceptQuality: true) }
+                        Button("Remove", role: .destructive) { model.discard(itemId: item.id) }
+                    }
+                    .font(.subheadline.weight(.semibold))
+                    .buttonStyle(.borderless)
+                }
             }
         }
         .task(id: item.id) {
-            guard !item.jpegData.isEmpty else { return }
-            let data = item.jpegData
+            guard let url = model.imageURL(for: item) else { return }
             thumbnail = await Task.detached(priority: .utility) {
-                Thumbnailer.thumbnail(from: data, maxPixel: 160)
+                Thumbnailer.thumbnail(from: url, maxPixel: 160)
             }.value
+        }
+        .fullScreenCover(isPresented: $showsScan) {
+            if let url = model.imageURL(for: item) { ZoomableImageScreen(imageURL: url) }
         }
     }
 }

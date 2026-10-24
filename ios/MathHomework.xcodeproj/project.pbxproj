@@ -14,9 +14,12 @@
 		34434F7EE07158B84E6DA3F5 /* DocumentScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3779310B2EC8F0C9736FC002 /* DocumentScannerView.swift */; };
 		45BA94B8DF36A6F9CEA76B8C /* ZoomableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 528B124653C2880B39CAC095 /* ZoomableImageView.swift */; };
 		48861ED9249488AF0939AF02 /* GradingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C26858F4BD29B8D7793F4 /* GradingTests.swift */; };
+		49876C4F86F7FB070A76A4D3 /* ImageQualityAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B44C49A879250E6E3BA0F73 /* ImageQualityAnalyzer.swift */; };
+		4AB276F26BB21521D0BCE790 /* OCRDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864614F494B2C23CD6F29AD5 /* OCRDiagnostics.swift */; };
 		56DC11277E5217117D907766 /* WalkthroughUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0DE2588D66BE8FE5534129 /* WalkthroughUITests.swift */; };
 		5AB42B79A1312C8CC0A7A74A /* GeminiLiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FDD5F2E3E1517A23B3B179 /* GeminiLiveTests.swift */; };
 		65FDD4272B0E9C7197DE256F /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C35BEC9441CE3D72C8B11D1 /* KeychainStore.swift */; };
+		698013A93C14B7B86988BC23 /* WorksheetMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A22D815350AD05AF0E7665 /* WorksheetMath.swift */; };
 		6AC56571FA1C80B38C414325 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D58815F049BE7761889BFAA /* ReviewView.swift */; };
 		77A4CE805D3F19219C212012 /* Contracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AEA91208280CEA9C9245E8A /* Contracts.swift */; };
 		7FD82BD9C12174BC1FCDCBE2 /* MathExpressionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */; };
@@ -27,6 +30,7 @@
 		A56A84FE608DFF18A94AF35F /* WorksheetOCR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE58A47C47D3744D2B130B9 /* WorksheetOCR.swift */; };
 		B0BE2C504AA6B04A42F68301 /* ImageNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */; };
 		D8C88A9D7536C2C1C79B3FD2 /* Fraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B390F79DFE286FCF14B85031 /* Fraction.swift */; };
+		E2B32E24A8993D3202E49704 /* PendingScan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D4A6AEB62EA563C619CAF7 /* PendingScan.swift */; };
 		E508F9A65AD3F1516107A5EC /* MathHomeworkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F1B84226895C2166FC2CFE3 /* MathHomeworkApp.swift */; };
 		ED311962E124091152B26CA1 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EE7445423A61C0B2B5E324 /* AppModel.swift */; };
 		EFEB1E908B8C84A268C06181 /* GeminiSchemas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76292FF941AF711EE31E5FE1 /* GeminiSchemas.swift */; };
@@ -61,6 +65,7 @@
 		2F1B84226895C2166FC2CFE3 /* MathHomeworkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathHomeworkApp.swift; sourceTree = "<group>"; };
 		3779310B2EC8F0C9736FC002 /* DocumentScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerView.swift; sourceTree = "<group>"; };
 		3FFBB04F16E1498CACACA83D /* Prompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompts.swift; sourceTree = "<group>"; };
+		45D4A6AEB62EA563C619CAF7 /* PendingScan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingScan.swift; sourceTree = "<group>"; };
 		4C0DE2588D66BE8FE5534129 /* WalkthroughUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughUITests.swift; sourceTree = "<group>"; };
 		4C35BEC9441CE3D72C8B11D1 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		528B124653C2880B39CAC095 /* ZoomableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageView.swift; sourceTree = "<group>"; };
@@ -72,15 +77,18 @@
 		76292FF941AF711EE31E5FE1 /* GeminiSchemas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiSchemas.swift; sourceTree = "<group>"; };
 		79610964A11EA733B30C7590 /* ActiveSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionView.swift; sourceTree = "<group>"; };
 		7D1132E4E07E8A58F714CFE6 /* MathHomeworkUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MathHomeworkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		864614F494B2C23CD6F29AD5 /* OCRDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRDiagnostics.swift; sourceTree = "<group>"; };
 		8AEA91208280CEA9C9245E8A /* Contracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contracts.swift; sourceTree = "<group>"; };
 		8FC06976B7171CD98BB6A461 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNormalizer.swift; sourceTree = "<group>"; };
 		9AE58A47C47D3744D2B130B9 /* WorksheetOCR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorksheetOCR.swift; sourceTree = "<group>"; };
+		9B44C49A879250E6E3BA0F73 /* ImageQualityAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageQualityAnalyzer.swift; sourceTree = "<group>"; };
 		A7F87149ABEF1BBB7108AAA1 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		B390F79DFE286FCF14B85031 /* Fraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fraction.swift; sourceTree = "<group>"; };
 		B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathExpressionParser.swift; sourceTree = "<group>"; };
 		B891AE0FC0856217C463BD79 /* SessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRepository.swift; sourceTree = "<group>"; };
 		B8B442402EEC278A3515D9FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2A22D815350AD05AF0E7665 /* WorksheetMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorksheetMath.swift; sourceTree = "<group>"; };
 		CD8A497DF7255F7F26D35C10 /* Grader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grader.swift; sourceTree = "<group>"; };
 		DE0CE45BC03F79BE36AD837F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		EC9C73DD23BD7E956F035DBC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -163,6 +171,7 @@
 				B390F79DFE286FCF14B85031 /* Fraction.swift */,
 				CD8A497DF7255F7F26D35C10 /* Grader.swift */,
 				B694CA907AC98FF3EED5BD23 /* MathExpressionParser.swift */,
+				C2A22D815350AD05AF0E7665 /* WorksheetMath.swift */,
 			);
 			path = Grading;
 			sourceTree = "<group>";
@@ -181,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				8AEA91208280CEA9C9245E8A /* Contracts.swift */,
+				45D4A6AEB62EA563C619CAF7 /* PendingScan.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -216,6 +226,8 @@
 			children = (
 				A7F87149ABEF1BBB7108AAA1 /* Haptics.swift */,
 				94A33CBF28A6B15C13908D99 /* ImageNormalizer.swift */,
+				9B44C49A879250E6E3BA0F73 /* ImageQualityAnalyzer.swift */,
+				864614F494B2C23CD6F29AD5 /* OCRDiagnostics.swift */,
 				1F54341E44C44832D52405D4 /* Thumbnailer.swift */,
 			);
 			path = Support;
@@ -360,14 +372,18 @@
 				9C30A92C2A21EF16376437EE /* HistoryView.swift in Sources */,
 				2FEACAD2AD84D6F01F144A8E /* HomeView.swift in Sources */,
 				B0BE2C504AA6B04A42F68301 /* ImageNormalizer.swift in Sources */,
+				49876C4F86F7FB070A76A4D3 /* ImageQualityAnalyzer.swift in Sources */,
 				65FDD4272B0E9C7197DE256F /* KeychainStore.swift in Sources */,
 				7FD82BD9C12174BC1FCDCBE2 /* MathExpressionParser.swift in Sources */,
 				E508F9A65AD3F1516107A5EC /* MathHomeworkApp.swift in Sources */,
+				4AB276F26BB21521D0BCE790 /* OCRDiagnostics.swift in Sources */,
+				E2B32E24A8993D3202E49704 /* PendingScan.swift in Sources */,
 				F5528B6A736AB4B206B0EB63 /* Prompts.swift in Sources */,
 				6AC56571FA1C80B38C414325 /* ReviewView.swift in Sources */,
 				93F4F5A4D2BC2A4362E8AA30 /* SessionRepository.swift in Sources */,
 				22244BBAD05B6A7BF7AD4369 /* SettingsView.swift in Sources */,
 				FFD1AB8DFF1DBBB76D1040B4 /* Thumbnailer.swift in Sources */,
+				698013A93C14B7B86988BC23 /* WorksheetMath.swift in Sources */,
 				A56A84FE608DFF18A94AF35F /* WorksheetOCR.swift in Sources */,
 				45BA94B8DF36A6F9CEA76B8C /* ZoomableImageView.swift in Sources */,
 			);

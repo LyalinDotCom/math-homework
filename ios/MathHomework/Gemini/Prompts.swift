@@ -1,6 +1,6 @@
 import Foundation
 
-// Verbatim port of electron/gemini/prompts.ts.
+// OCR-only rules shared with the desktop app, extended for iPhone worksheets.
 enum Prompts {
     static let transcription = """
     Transcribe this single structured math homework worksheet page. Read every visible printed math problem and the student's handwritten answer in reading order.
@@ -14,7 +14,7 @@ enum Prompts {
     - For example, if the page has a printed "=" followed by a handwritten "7", studentAnswer is "7", never "= 7", "17", or "= 17".
     - Use an empty string for a blank answer. Do not guess an unclear digit; lower confidence instead.
 
-    Preserve fractions, decimals, negative signs, operators, and grouping exactly. Use an empty string for a blank answer. Do not invent cropped or unreadable problems. Return only the requested structured result.
+    Preserve fractions, decimals, negative signs, operators, and grouping exactly. For a missing-number equation, preserve the COMPLETE printed equation with [] standing for the missing NUMBER (adjacent digit boxes are ONE number), e.g. "23 + [] = 58". Never substitute the student's writing into the printed expression. For number sequences, preserve the printed numbers and each missing term in order, e.g. "98, 100, 102, [], []"; studentAnswer contains the handwritten missing terms in order separated by commas. Include all problem numbers, including stars or letter suffixes, exactly as printed. Do not invent cropped or unreadable problems. Return only the requested structured result, with no explanations. Never solve a sequence or fill a missing number yourself.
     """
 
     static func verification(firstPassJSON: String) -> String {

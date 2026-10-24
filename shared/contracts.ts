@@ -43,6 +43,7 @@ export const ProblemSchema = TranscribedProblemSchema.extend({
   gradingMethod: z.enum(["local-arithmetic", "manual-required"]).optional(),
   calculatedIsCorrect: z.boolean().nullable().optional(),
   manualIsCorrect: z.boolean().nullable().optional(),
+  requiresExpressionConfirmation: z.boolean().optional(),
 });
 
 export const ReviewSchema = z.object({

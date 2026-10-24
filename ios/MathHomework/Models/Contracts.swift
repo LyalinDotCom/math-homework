@@ -96,6 +96,7 @@ struct Problem: Codable, Equatable {
     var gradingMethod: GradingMethod?
     var calculatedIsCorrect: Bool?
     var manualIsCorrect: Bool?
+    var requiresExpressionConfirmation: Bool?
 }
 
 struct Review: Codable, Equatable {

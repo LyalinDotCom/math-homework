@@ -10,6 +10,7 @@ struct GeminiInteractionsClient {
         case api(String)
         case emptyOutput(String)
         case modelMismatch(expected: String, received: String)
+        case http(Int, String)
 
         var errorDescription: String? {
             switch self {
@@ -21,12 +22,15 @@ struct GeminiInteractionsClient {
                 return "Gemini returned no \(label)"
             case .modelMismatch(let expected, let received):
                 return "Model mismatch: expected \(expected), received \(received)"
+            case .http(let status, let message):
+                return status == 429 ? "Gemini is busy or its quota was reached. Your scan is saved. Retry shortly." : message
             }
         }
     }
 
     let apiKey: String
     let model: String
+    var sessionOverride: URLSession? = nil
 
     private static let endpoint = URL(
         string: "https://generativelanguage.googleapis.com/v1beta/interactions"
@@ -36,6 +40,7 @@ struct GeminiInteractionsClient {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.timeoutIntervalForRequest = 90
         configuration.timeoutIntervalForResource = 90
+        configuration.httpMaximumConnectionsPerHost = 6
         return URLSession(configuration: configuration)
     }()
 
@@ -44,13 +49,16 @@ struct GeminiInteractionsClient {
         promptText: String,
         jpegData: Data,
         schema: [String: Any],
-        label: String
+        label: String,
+        context: String = "worksheet"
     ) async throws -> String {
         guard !apiKey.isEmpty else { throw ClientError.notConfigured }
 
         let body: [String: Any] = [
             "model": model,
             "store": false,
+            // OCR is visual transcription, not a mathematical reasoning task.
+            "generation_config": ["thinking_level": "low"],
             "input": [
                 ["type": "text", "text": promptText],
                 [
@@ -75,23 +83,37 @@ struct GeminiInteractionsClient {
 
         var lastError: Error = ClientError.api("Gemini request failed")
         for attempt in 1...3 {
+            try Task.checkCancellation()
+            let started = Date()
+            let fields = ["page": context, "stage": label, "attempt": String(attempt),
+                          "image_bytes": String(jpegData.count), "model": model]
+            OCRDiagnostics.record("request_started", fields: fields)
             do {
-                let (data, response) = try await Self.session.data(for: request)
+                let (data, response) = try await (sessionOverride ?? Self.session).data(for: request)
                 let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+                OCRDiagnostics.record("response", fields: fields.merging([
+                    "duration_ms": String(Int(Date().timeIntervalSince(started) * 1_000)),
+                    "status": String(status), "response_bytes": String(data.count)
+                ], uniquingKeysWith: { _, new in new }))
                 guard (200..<300).contains(status) else {
                     let message = Self.errorMessage(from: data, status: status)
                     if Self.isRetriableStatus(status), attempt < 3 {
-                        lastError = ClientError.api(message)
-                        try await Self.backoff(attempt: attempt)
+                        lastError = ClientError.http(status, message)
+                        try await Self.backoff(attempt: attempt, response: response as? HTTPURLResponse)
                         continue
                     }
-                    throw ClientError.api(message)
+                    throw ClientError.http(status, message)
                 }
                 return try Self.parseOutputText(data: data, expectedModel: model, label: label)
             } catch let error as ClientError {
                 throw error
             } catch {
+                try Task.checkCancellation()
                 lastError = error
+                OCRDiagnostics.record("request_failed", fields: fields.merging([
+                    "duration_ms": String(Int(Date().timeIntervalSince(started) * 1_000)),
+                    "error_code": String((error as NSError).code)
+                ], uniquingKeysWith: { _, new in new }))
                 guard attempt < 3, Self.isRetriable(error) else { throw error }
                 try await Self.backoff(attempt: attempt)
             }
@@ -99,9 +121,19 @@ struct GeminiInteractionsClient {
         throw lastError
     }
 
-    private static func backoff(attempt: Int) async throws {
-        let milliseconds = 400 * (1 << (attempt - 1))
-        try await Task.sleep(nanoseconds: UInt64(milliseconds) * 1_000_000)
+    private static func backoff(attempt: Int, response: HTTPURLResponse? = nil) async throws {
+        var delay = 0.8 * pow(2, Double(attempt - 1)) + Double.random(in: 0...0.4)
+        if let header = response?.value(forHTTPHeaderField: "Retry-After") {
+            if let seconds = Double(header), seconds.isFinite {
+                delay = max(delay, min(120, seconds))
+            } else {
+                let formatter = DateFormatter()
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss zzz"
+                if let date = formatter.date(from: header) { delay = max(delay, min(120, date.timeIntervalSinceNow)) }
+            }
+        }
+        try await Task.sleep(nanoseconds: UInt64(max(0, delay) * 1_000_000_000))
     }
 
     private static func isRetriableStatus(_ status: Int) -> Bool {
@@ -112,11 +144,17 @@ struct GeminiInteractionsClient {
         guard let urlError = error as? URLError else { return false }
         switch urlError.code {
         case .timedOut, .networkConnectionLost, .cannotConnectToHost,
-             .notConnectedToInternet, .dnsLookupFailed, .cancelled:
+             .notConnectedToInternet, .dnsLookupFailed:
             return true
         default:
             return false
         }
+    }
+
+    static func canRetryAutomatically(_ error: Error) -> Bool {
+        if isRetriable(error) { return true }
+        if case ClientError.http(let status, _) = error { return isRetriableStatus(status) }
+        return false
     }
 
     private static func errorMessage(from data: Data, status: Int) -> String {
