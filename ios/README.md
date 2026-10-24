@@ -1,7 +1,7 @@
 # Math Homework for iOS
 
 The iPhone port of the desktop app: scan worksheet pages with the system
-document camera, let Gemini 3.5 Flash transcribe them in two independent
+document camera, let Gemini 3.8 Flash transcribe them in two independent
 OCR-only passes, and grade the arithmetic locally on the phone. Same archive
 format, same prompts, same grading rules as the Mac app.
 

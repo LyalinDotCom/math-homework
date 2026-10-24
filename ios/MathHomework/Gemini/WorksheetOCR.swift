@@ -4,7 +4,7 @@ import Foundation
 /// passes (structured transcription, then a handwriting check), merged and
 /// graded locally.
 struct WorksheetOCR {
-    static let geminiModel = "gemini-3.5-flash"
+    static let geminiModel = "gemini-3.8-flash"
 
     let apiKey: String
     let model: String

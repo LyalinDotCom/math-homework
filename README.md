@@ -14,7 +14,7 @@ same archive format, prompts, and grading rules.
 2. The sandboxed preload exposes a narrow IPC API; it does not expose Node.js.
 3. The Electron main process validates the JPEG data URL and writes the original
    image before making a remote request.
-4. Gemini 3.5 Flash performs two OCR-only passes: structured transcription, then
+4. Gemini 3.8 Flash performs two OCR-only passes: structured transcription, then
    an independent handwriting check. Both responses must match strict Zod
    schemas and are saved separately.
 5. `mathjs` parses only a restricted arithmetic AST (`+`, `-`, `*`, `/`, and a

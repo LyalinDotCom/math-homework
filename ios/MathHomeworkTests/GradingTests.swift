@@ -1,6 +1,18 @@
 import XCTest
 @testable import MathHomework
 
+final class GeminiSchemaTests: XCTestCase {
+    func testEmbeddedSchemasAreValid() {
+        for schema in [GeminiSchemas.transcription, GeminiSchemas.verification] {
+            XCTAssertEqual(GeminiSchemas.parsed(schema)["type"] as? String, "object")
+        }
+    }
+
+    func testInvalidSchemaLogsAndReturnsWithoutTrapping() {
+        XCTAssertTrue(GeminiSchemas.parsed("invalid JSON").isEmpty)
+    }
+}
+
 /// Mirror of tests/grading.test.ts so the Swift grader stays in lockstep with
 /// the desktop implementation.
 final class GradingTests: XCTestCase {

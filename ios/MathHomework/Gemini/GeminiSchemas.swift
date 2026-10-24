@@ -60,7 +60,7 @@ enum GeminiSchemas {
         guard let data = schema.data(using: .utf8),
               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         else {
-            assertionFailure("Embedded schema is not valid JSON")
+            NSLog("IOS_VALIDATION_FAILURE: Embedded Gemini schema is not valid JSON")
             return [:]
         }
         return object

@@ -12,7 +12,7 @@ import {
 import { gradeReview } from "../grading/grade-problem";
 import { TRANSCRIPTION_PROMPT, verificationPrompt } from "./prompts";
 
-export const GEMINI_MODEL = "gemini-3.5-flash";
+export const GEMINI_MODEL = "gemini-3.8-flash";
 
 const TRANSCRIPTION_JSON_SCHEMA = toGeminiJsonSchema(TranscriptionSchema);
 const VERIFICATION_JSON_SCHEMA = toGeminiJsonSchema(
