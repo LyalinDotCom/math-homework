@@ -34,23 +34,42 @@ struct HistoryView: View {
 struct SessionDetailView: View {
     @Environment(AppModel.self) private var model
     let sessionId: String
-    @State private var selectedPageIndex = 0
+    @State private var pageSearch = ""
 
     private var session: Session? {
         model.history.first { $0.id == sessionId }
     }
 
+    private var matchingPages: [SessionPage] {
+        let query = pageSearch.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (session?.pages ?? []).filter {
+            query.isEmpty || $0.review.worksheetTitle.localizedCaseInsensitiveContains(query)
+                || "Page \($0.metadata.number)".localizedCaseInsensitiveContains(query)
+        }
+    }
+
     var body: some View {
         Group {
             if let session, !session.pages.isEmpty {
-                TabView(selection: $selectedPageIndex) {
-                    ForEach(Array(session.pages.enumerated()), id: \.element.id) { index, page in
-                        ReviewView(sessionId: session.id, page: page)
-                            .tag(index)
+                List {
+                    Section {
+                        if matchingPages.isEmpty {
+                            ContentUnavailableView.search(text: pageSearch)
+                        }
+                        ForEach(matchingPages) { page in
+                            NavigationLink {
+                                SessionPageReviewView(sessionId: session.id, initialPageId: page.id)
+                            } label: {
+                                PageRow(page: page)
+                            }
+                        }
+                    } header: {
+                        Text("Worksheets")
+                    } footer: {
+                        Text("Tap a worksheet title to open that page.")
                     }
                 }
-                .tabViewStyle(.page(indexDisplayMode: session.pages.count > 1 ? .always : .never))
-                .indexViewStyle(.page(backgroundDisplayMode: .always))
+                .listStyle(.insetGrouped)
             } else {
                 ContentUnavailableView {
                     Label("No pages in this session", systemImage: "doc")
@@ -61,6 +80,7 @@ struct SessionDetailView: View {
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $pageSearch, placement: .navigationBarDrawer(displayMode: .always), prompt: "Find a worksheet title")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Add Pages") {
@@ -73,6 +93,53 @@ struct SessionDetailView: View {
 
     private var title: String {
         guard let session, !session.pages.isEmpty else { return "Session" }
-        return "Page \(min(selectedPageIndex + 1, session.pages.count)) of \(session.pages.count)"
+        return "\(session.pages.count) \(session.pages.count == 1 ? "Page" : "Pages")"
+    }
+}
+
+/// Entered from a named worksheet row. Swiping remains available, while the
+/// entire collection and its actions belong to the parent list screen.
+struct SessionPageReviewView: View {
+    @Environment(AppModel.self) private var model
+    @Environment(\.dismiss) private var dismiss
+    let sessionId: String
+    @State private var selectedPageId: String
+
+    init(sessionId: String, initialPageId: String) {
+        self.sessionId = sessionId
+        _selectedPageId = State(initialValue: initialPageId)
+    }
+
+    private var session: Session? {
+        model.history.first { $0.id == sessionId }
+    }
+
+    var body: some View {
+        Group {
+            if let session {
+                TabView(selection: $selectedPageId) {
+                    ForEach(session.pages) { page in
+                        ReviewView(sessionId: session.id, page: page)
+                            .tag(page.id)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: session.pages.count > 1 ? .always : .never))
+                .indexViewStyle(.page(backgroundDisplayMode: .always))
+            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Pages") { dismiss() }
+            }
+        }
+    }
+
+    private var title: String {
+        guard let session,
+              let index = session.pages.firstIndex(where: { $0.id == selectedPageId })
+        else { return "Worksheet" }
+        return "Page \(index + 1) of \(session.pages.count)"
     }
 }

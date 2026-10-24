@@ -188,7 +188,7 @@ struct ActiveSessionView: View {
     }
 }
 
-private struct PageRow: View {
+struct PageRow: View {
     let page: SessionPage
     @State private var thumbnail: UIImage?
 
@@ -204,7 +204,7 @@ private struct PageRow: View {
                         : page.review.worksheetTitle
                 )
                 .font(.body.weight(.medium))
-                .lineLimit(1)
+                .lineLimit(2)
                 Text("Page \(page.metadata.number) · \(correct) of \(total) correct")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
