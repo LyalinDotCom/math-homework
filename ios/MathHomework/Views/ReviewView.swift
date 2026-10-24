@@ -29,6 +29,14 @@ struct ReviewView: View {
         List {
             Section {
                 header
+                Button("Read This Page Again") {
+                    model.recheckPage(sessionId: sessionId, page: page)
+                }
+                .disabled(isDirty)
+            } footer: {
+                Text(isDirty
+                    ? "Save your edits before reading this page again."
+                    : "Reads the saved photo again and replaces this page’s result.")
             }
 
             Section {
@@ -56,14 +64,6 @@ struct ReviewView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    model.recheckPage(sessionId: sessionId, page: page)
-                } label: {
-                    Label("Read Again", systemImage: "arrow.clockwise")
-                }
-                .disabled(isDirty)
-            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { focusedField = nil }

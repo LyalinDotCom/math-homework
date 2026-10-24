@@ -55,7 +55,7 @@ struct SessionDetailView: View {
                 ContentUnavailableView {
                     Label("No pages in this session", systemImage: "doc")
                 } description: {
-                    Text("Resume the session to scan pages.")
+                    Text("Tap Add Pages to scan more worksheets into this session.")
                 }
             }
         }
@@ -63,20 +63,16 @@ struct SessionDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
+                Button("Add Pages") {
                     Haptics.tap()
                     model.resumeSession(sessionId)
-                } label: {
-                    Label("Resume", systemImage: "doc.viewfinder")
                 }
             }
         }
     }
 
     private var title: String {
-        guard let session,
-              let startedAt = Timestamps.parseISO(session.metadata.startedAt)
-        else { return "Session" }
-        return startedAt.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+        guard let session, !session.pages.isEmpty else { return "Session" }
+        return "Page \(min(selectedPageIndex + 1, session.pages.count)) of \(session.pages.count)"
     }
 }
